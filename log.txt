@@ -1,0 +1,42 @@
+gircommit d9d828ef94c95db5d456387c8231732b315bb29c
+Author: = <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 22:11:49 2024 +0100
+
+    add basic conception useCasae Ayoub useCase sifDine
+
+commit b42f327f09beeee28cdb2fd7a60625adbaa836d3
+Merge: e14ae14 1602f25
+Author: = <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 21:06:32 2024 +0100
+
+    Merge branch 'main' of https://github.com/ayoubmajid67/pfa_3iir_poste_Maroc
+
+commit e14ae14f1973191b074522602551a19cbeb833b3
+Author: = <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 21:05:36 2024 +0100
+
+    test
+
+commit 1602f25d6f48fe534c0f0d307655134d93d5d972
+Author: mehdch22 <mehdismeex@gmail.com>
+Date:   Fri Jul 5 20:49:26 2024 +0100
+
+    oposm
+
+commit 50ea01766b3a89f989e4ff29834da8e914885c22
+Author: = <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 20:26:11 2024 +0100
+
+    first intial commint 8:26 7/5/24
+
+commit 358b11e3c8e5b9c5f815849bd9b42ec24b1ba045
+Author: youbista <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 20:21:41 2024 +0100
+
+    Update README.md
+
+commit 6e7d81dae79a2b6e0c694b348a48758b604703ad
+Author: youbista <AYOUBMAJID71@GMAIL.COM>
+Date:   Fri Jul 5 20:13:53 2024 +0100
+
+    Initial commit
