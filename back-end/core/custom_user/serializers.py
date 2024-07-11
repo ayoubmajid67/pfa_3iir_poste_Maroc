@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     office = serializers.PrimaryKeyRelatedField(queryset=Office.objects.all())
     class Meta:
         model = User
-        fields = ['id', 'cin', 'first_name', 'last_name', 'email', 'role', 'status', 'office']
+        fields = ['id', 'cin', 'first_name', 'last_name', 'email', 'password', 'role', 'status', 'office']
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):

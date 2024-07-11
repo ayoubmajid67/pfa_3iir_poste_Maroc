@@ -2,10 +2,23 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from custom_user.permissions import *
-from models import Office
-from serializers import OfficeSerializer
+from .models import Office
+from .serializers import OfficeSerializer
 
 # Create your views here.
+class OfficeView(APIView):
+    permission_classes = [IsAdmin]
+
+    # create a new office
+    def post(self, request):
+        serializer = OfficeSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            return Response({"message": "Office created successfully", "office": serializer.data}, status=201)
+        return Response({"error": serializer.errors}, status=400)
+
 class OfficeList(APIView):
     permission_classes = [IsAdmin]
 
