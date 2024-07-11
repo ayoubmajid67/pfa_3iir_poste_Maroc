@@ -1,5 +1,6 @@
 from django_use_email_as_username.models import BaseUser, BaseUserManager
 from django.db import models 
+from office.models import Office
 
 class Person(models.Model):
     cin = models.CharField(max_length=20 ,unique=True)
@@ -29,6 +30,8 @@ class User(BaseUser, Person):
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=10, choices=ROLES, default='agent')
     status = models.CharField(max_length=20, choices=STATUS, default='actif')
+
+    office = models.ForeignKey(Office, on_delete=models.CASCADE)
 
     objects = BaseUserManager()
 
