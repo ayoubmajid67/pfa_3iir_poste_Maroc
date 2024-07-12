@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from custom_user.permissions import *
@@ -37,3 +36,14 @@ class OfficeList(APIView):
         offices = Office.objects.all()
 
         return Response(OfficeSerializer(offices, many=True).data, status=200)
+
+# get the office information of the logged in staff member 
+class OwnOffice(APIView):
+    permission_classes = [IsAdmin|IsManager]
+
+    def get(self, request):
+        try:
+            office = Office.objects.filter(id=request.user.office.id).first()
+            return Response(OfficeSerializer(office).data, status=200)
+        except Office.DoesNotExist:
+            return Response({"error": "Office not found"}, status=404)
