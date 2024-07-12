@@ -19,6 +19,17 @@ class OfficeView(APIView):
             return Response({"message": "Office created successfully", "office": serializer.data}, status=201)
         return Response({"error": serializer.errors}, status=400)
 
+    # update an office
+    def patch(self, request, id):
+        office = Office.objects.get(id=id)
+        serializer = OfficeSerializer(office, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            
+            return Response({"message": "Office updated successfully", "office": serializer.data}, status=200)
+        return Response({"error": serializer.errors}, status=400)
+
 class OfficeList(APIView):
     permission_classes = [IsAdmin]
 
