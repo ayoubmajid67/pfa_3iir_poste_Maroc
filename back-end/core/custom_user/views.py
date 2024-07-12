@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from custom_user.permissions import *
-from .models import User, Client
+from .models import User, Client, STAFF_ROLES, STAFF_STATUS
 from .serializers import *
 from office.models import Office
 from office.serializers import OfficeSerializer
@@ -78,8 +78,62 @@ class OfficeStaffList(APIView):
 
     def get(self, request):
         office_id = request.user.office
-        
+
         # get all the staff members of the office except the office manager
         staff = User.objects.filter(office=office_id).exclude(role='manager')
 
         return Response(UserWithOfficeSerializer(staff, many=True).data, status=200)
+    
+class UpdateStaff(APIView):
+    permission_classes = [IsAdmin]
+
+    def patch(self, request, id):
+        try:
+            staff = User.objects.get(id=id)
+
+            # prohibit id update
+            if "id" in request.data:
+                del request.data["id"]
+
+            # check the uniqueness of the CIN value given
+            if "cin" in request.data:
+                # .exclude(id=id) is used to exclude the current user from the search
+                if User.objects.filter(cin=request.data["cin"]).exclude(id=id).exists():
+                    return Response({"error": "CIN already used by another user"}, status=400)
+                
+            # check the uniqueness of the email value given
+            if "email" in request.data:
+                if User.objects.filter(email=request.data["email"]).exclude(id=id).exists():
+                    return Response({"error": "Email already used by another user"}, status=400)
+                
+            # check the validity of the role value given
+            if "role" in request.data:
+                # extract the role values from the STAFF_ROLES list
+                valid_roles = [role[0] for role in STAFF_ROLES]
+                if request.data["role"] not in valid_roles:
+                    print(request.data["role"])
+                    return Response({"error": "Invalid role choice"}, status=400)
+
+            # check the validity of the status value given
+            if "status" in request.data:
+                valid_status = [status[0] for status in STAFF_STATUS]
+                if request.data["status"] not in valid_status:
+                    return Response({"error": "Invalid status choice"}, status=400)
+
+            # check the existence of the office given
+            if "office" in request.data:
+                office = Office.objects.get(id=request.data["office"])
+                if office is not None:
+                    request.data["office"] = office.id
+            
+            serializer = UserSerializer(staff, data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            return Response(serializer.errors, status=400)
+        
+        except Office.DoesNotExist:
+            return Response({"error": "Office not found"}, status=404)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
