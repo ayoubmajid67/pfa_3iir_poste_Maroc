@@ -7,6 +7,7 @@ from .serializers import *
 from office.models import Office
 from office.serializers import OfficeSerializer
 
+# create a new staff member
 class Register(APIView):
     permission_classes = [IsAdmin]
     def post(self, request):
@@ -75,7 +76,10 @@ class StaffList(APIView):
 class OfficeStaffList(APIView):
     permission_classes = [IsManager]
 
-    def get(self, request, office_id):
-        staff = User.objects.filter(office=office_id)
+    def get(self, request):
+        office_id = request.user.office
+        
+        # get all the staff members of the office except the office manager
+        staff = User.objects.filter(office=office_id).exclude(role='manager')
 
         return Response(UserWithOfficeSerializer(staff, many=True).data, status=200)
