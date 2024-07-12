@@ -91,10 +91,6 @@ class UpdateStaff(APIView):
         try:
             staff = User.objects.get(id=id)
 
-            # prohibit id update
-            if "id" in request.data:
-                del request.data["id"]
-
             # check the uniqueness of the CIN value given
             if "cin" in request.data:
                 # .exclude(id=id) is used to exclude the current user from the search
