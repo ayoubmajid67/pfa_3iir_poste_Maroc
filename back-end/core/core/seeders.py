@@ -1,4 +1,6 @@
-from .factories import ProductFactory
+from product.factories import ProductFactory
+from send_request.factories import SMSFactory
+from send_request.models import SMS
 
 # package product record (colis)
 ProductFactory.create(
@@ -16,3 +18,6 @@ ProductFactory.create(
     sequence=0
 )
 
+# SMS record
+if not SMS.objects.exists(): # the record must not exist
+    SMSFactory.create()
