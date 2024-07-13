@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+html, body {
+    overflow-x: hidden;
+
+}
+
+body {
+    font-family: "Open Sans", sans-serif;
+}
+
+li, ul {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+input, button {
+    border: none;
+    outline: none;
+}
+
+input:focus {
+    border: none;
+    outline: none;
+}
+
+:root {
+    --primaryColor: #ed731d;
+    --secondaryColor: #4f92d1;
+    --thirdColor :#f9f9f9;
+}
+
+
+
+
+section.hint {
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: absolute;
+    top: 150px;
+   width: 450px;
+   max-width: 100%;
+    right: 0px;
+  
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: -1;
+    overflow :hidden; 
+  
+ display :flex; 
+   
+}
+section.hint.ActiveAlter{
+z-index: 1000;
+}
+
+.alert {
+    transform: translateX(110%);
+    width: 90%;
+    padding: 16px;
+    margin: 8px;
+    max-width: 80vw;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Open Sans', sans-serif;
+    color: #333;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.alert#ActiveAlter{
+    z-index: 1000;
+    transform: translateX(0);
+}
+
+
+.alert-warning {
+    border-left: 6px solid var(--secondaryColor);
+    background-color: #fff5e5;
+}
+
+.alert-warning .alert-title {
+    color: var(--secondaryColor);
+    font-weight: 600;
+}
+
+.alert-success {
+    border-left: 6px solid var(--primaryColor);
+    background-color: #e5f7e5;
+}
+
+.alert-success .alert-title {
+    color: var(--primaryColor);
+    font-weight: 600;
+}
+
+
+.alert-danger {
+    border-left: 6px solid #ff3838;
+    background-color: #ffe5e5;
+}
+
+.alert-danger .alert-title {
+    color: #ff3838;
+    font-weight: 600;
+}
+
+.alert-title {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 18px;
+   
+}
+
+.alert-content {
+    margin: 0;
+    font-size: 14px;
+    color: #555555;
+}
