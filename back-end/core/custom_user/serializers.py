@@ -30,7 +30,6 @@ class ClientSerializer(serializers.ModelSerializer):
 class UserWithOfficeSerializer(serializers.ModelSerializer):
     
     office = OfficeSerializer()  
-    user = UserSerializer()  
     
     class Meta:
         model = User

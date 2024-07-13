@@ -12,24 +12,25 @@ class Person(models.Model):
         abstract = True
 
 
-# the user class represents the staff interacting with the system
-class User(BaseUser, Person):
-    ROLES = [
+STAFF_ROLES = [
         ('admin', 'admin'),
         ('manager', 'manager'),
         ('agent', 'agent'),
-    ]
+]
 
-    STATUS = [
+STAFF_STATUS = [
         ('actif', 'actif'),
         ('démissionné', 'démissionné'),
         ('décédé', 'décédé'),
         ('retraite', 'retraite'),
-    ]
+]
+
+# the user class represents the staff interacting with the system
+class User(BaseUser, Person):
 
     email = models.EmailField(unique=True)
-    role = models.CharField(max_length=10, choices=ROLES, default='agent')
-    status = models.CharField(max_length=20, choices=STATUS, default='actif')
+    role = models.CharField(max_length=10, choices=STAFF_ROLES, default='agent')
+    status = models.CharField(max_length=20, choices=STAFF_STATUS, default='actif')
 
     office = models.ForeignKey(Office, on_delete=models.CASCADE)
 
