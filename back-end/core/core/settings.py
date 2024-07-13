@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'custom_user.apps.CustomUserConfig',
     'office',
+    'product',
 ]
 
 MIDDLEWARE = [
