@@ -121,6 +121,11 @@ class UpdateStaff(APIView):
                 office = Office.objects.get(id=request.data["office"])
                 if office is not None:
                     request.data["office"] = office.id
+
+            if "password" in request.data:
+                staff.set_password(request.data["password"])
+                staff.save()
+                return Response({"message": "Password updated successfully"}, status=200)
             
             serializer = UserSerializer(staff, data=request.data, partial=True)
 
