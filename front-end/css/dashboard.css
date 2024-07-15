@@ -1,0 +1,114 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: var(--thirdColor);
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.logo {
+    height: 40px;
+}
+
+.sidebar {
+    background-color: var(--fourthColor);
+    color: #fff;
+    position: fixed;
+    top: 72px; /* Align with the height of the navbar */
+    bottom: 0;
+    left: 0;
+    width: 200px; /* Width of the sidebar */
+    padding: 1rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+.sidebar-button {
+    background: var(--secondaryColor);
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+    border-radius: 8px; /* Adding border radius */
+    margin-bottom: 30px; /* Adding space between buttons */
+}
+
+.sidebar-button:hover {
+    background: #2d3748; /* Tailwind's bg-gray-700 */
+}
+
+.main-content {
+    margin-left: 200px; /* Match the width of the sidebar */
+    padding: 20px;
+    padding-top: 160px; /* Adjust based on the height of the navbar and message */
+}
+
+/* Moving Message Animation */
+.moving-message-container {
+    background-color: white; /* Fixed white background */
+    position: fixed;
+    top: 70px; /* Adjusted to move the message further down */
+    width: 100%;
+    overflow: hidden;
+    z-index: 1;
+    height: 30px; /* Adjust this based on the height of your text */
+    display: flex;
+    align-items: center;
+}
+
+.moving-message {
+    display: inline-block;
+    white-space: nowrap;
+    position: relative;
+    will-change: transform;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar > div {
+        width: 100%;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar {
+        width: 100%;
+        top: 64px; /* Adjust based on the height of the navbar */
+        bottom: auto;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .sidebar-button {
+        flex: 1;
+        margin: 0 5px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding-top: 180px; /* Adjust based on the height of the navbar and message */
+    }
+}
