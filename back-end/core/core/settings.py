@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'office',
     'product',
     'send_request',
+    'weight_range',
 ]
 
 MIDDLEWARE = [
