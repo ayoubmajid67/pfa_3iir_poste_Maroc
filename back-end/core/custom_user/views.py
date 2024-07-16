@@ -138,3 +138,15 @@ class UpdateStaff(APIView):
             return Response({"error": "Office not found"}, status=404)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
+        
+class CheckClientExistance(APIView):
+    permission_classes = [IsAgent]
+
+    def post(self, request):
+        if client_exists(request.data["cin"]):
+            return Response(ClientSerializer(Client.objects.get(cin=request.data["cin"])).data, status=200)
+        else:
+            return Response({"error": "Client not found"}, status=404)
+        
+def client_exists(cin):
+    return Client.objects.filter(cin=cin).exists()
