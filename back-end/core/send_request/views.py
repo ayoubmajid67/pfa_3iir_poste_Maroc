@@ -7,12 +7,14 @@ from .serializers import RequestSerializer
 from custom_user.models import Client, User
 from product.models import Product
 from custom_user.serializers import ClientSerializer
+from weight_range.models import Weight_range
 
+# helper function to insert a record in the database
 def insert_record(client, request):
     client = Client.objects.get(cin=request.data["cin"])
     product = Product.objects.get(id=request.data["product"])
     user = User.objects.get(id=request.user.id)
-    # range =
+    range = Weight_range.objects.get(id=request.data["range"])
     
     record = {
         "client": client.id,
@@ -22,7 +24,7 @@ def insert_record(client, request):
         "weight": request.data["weight"],
         "destination": request.data["destination"],
         "amount": request.data["amount"],
-        # "range": range.id,
+        "range": range.id,
     }
 
     serializer = RequestSerializer(data=record)
@@ -57,3 +59,5 @@ class SendRequest(APIView):
                 insert_record(Client.objects.get(cin=request.data["cin"]), request)
             else:
                 return Response({"error": serializer.errors}, status=400)
+        except Weight_range.DoesNotExist:
+            return Response({"error": "Weight range does not exist"}, status=404)

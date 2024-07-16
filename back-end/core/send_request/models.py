@@ -1,6 +1,7 @@
 from django.db import models
 from product.models import Product
 from custom_user.models import Client, User
+from weight_range.models import Weight_range
 
 # Create your models here.
 
@@ -32,4 +33,4 @@ class SendingRequest(models.Model):
     amount = models.FloatField(default=0)
     client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    # add range fk later
+    range = models.ForeignKey(Weight_range, on_delete=models.SET_NULL, null=True)
