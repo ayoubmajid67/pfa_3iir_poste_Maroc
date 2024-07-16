@@ -6,6 +6,7 @@ from .models import User, Client, STAFF_ROLES, STAFF_STATUS
 from .serializers import *
 from office.models import Office
 from office.serializers import OfficeSerializer
+from rest_framework.throttling import AnonRateThrottle
 
 # create a new staff member
 class Register(APIView):
@@ -44,6 +45,7 @@ class Register(APIView):
             return Response({"error": "Office does not exist"}, status=404)
 
 class Login(APIView):
+    # throttle_classes = [AnonRateThrottle] # limit the number of non-authenticated user requests to 3 every 30 minutes
     def post(self, request):
         email = request.data["email"]
         password = request.data["password"]
