@@ -1,0 +1,120 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4aa;
+}
+
+.date-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.date-inputs input[type="date"] {
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+}
+
+.date-inputs span {
+    text-align: center;
+    font-size: 16px;
+    color: #333333;
+}
+
+.date-form button {
+    padding: 10px 20px;
+    background-color: var(--primaryColor);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    align-self: stretch;
+}
+
+.date-form button:hover {
+    background-color: #e68900;
+}
+.horizontal-line {
+    width: 100vw;
+    border: none;
+    height: 2px;
+    background-color: #cccccc;
+    position: absolute;
+    left: 0;
+    margin-top: 400px;
+    z-index: 0;
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.data-table th, .data-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #dddddd;
+}
+
+.data-table th {
+    background-color: #f4f4f4;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.annuler-button {
+    background-color: var(--secondaryColor);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.annuler-button:hover {
+    background-color: #e68900;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .date-inputs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .date-inputs input[type="date"], .date-inputs span {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .date-form {
+        padding: 10px;
+    }
+
+    .data-table th, .data-table td {
+        padding: 8px;
+    }
+}
