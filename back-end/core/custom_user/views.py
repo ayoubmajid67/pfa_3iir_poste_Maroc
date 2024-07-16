@@ -6,7 +6,8 @@ from .models import User, Client, STAFF_ROLES, STAFF_STATUS
 from .serializers import *
 from office.models import Office
 from office.serializers import OfficeSerializer
-from rest_framework.throttling import AnonRateThrottle
+from core.throttling import CustomAnonRateThrottle
+from django.contrib.auth import authenticate
 
 # create a new staff member
 class Register(APIView):
@@ -45,27 +46,24 @@ class Register(APIView):
             return Response({"error": "Office does not exist"}, status=404)
 
 class Login(APIView):
-    # throttle_classes = [AnonRateThrottle] # limit the number of non-authenticated user requests to 3 every 30 minutes
+    throttle_classes = [CustomAnonRateThrottle]  # Limit the number of login requests to 3 every 30 minutes
+
     def post(self, request):
-        email = request.data["email"]
-        password = request.data["password"]
+        email = request.data.get("email")
+        password = request.data.get("password")
 
-        user = User.objects.filter(email=email).first()
+        # authenticate built-in function checks if the user exists and the password is correct
+        user = authenticate(request, username=email, password=password)
 
-        if user is None:
-            return Response({"message": "User not found"}, status=404)
-        else:
-            if user.check_password(password):
+        if not user or user.status != 'actif':
+            return Response({"message": "Invalid credentials"}, status=401)
 
-                # generate an access token
-                token = RefreshToken.for_user(user)
-                return Response({
-                    "user": UserSerializer(user).data,
-                    "token": str(token.access_token)
-                }, status=200)
-            
-            else:
-                return Response({'message': 'Invalid credentials'}, status=401)
+        # generate an access token
+        token = RefreshToken.for_user(user)
+        return Response({
+            "user": UserSerializer(user).data,
+            "token": str(token.access_token)
+        }, status=200)
 
 class StaffList(APIView):
     permission_classes = [IsAdmin]
