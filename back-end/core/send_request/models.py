@@ -1,4 +1,6 @@
 from django.db import models
+from product.models import Product
+from custom_user.models import Client, User
 
 # Create your models here.
 
@@ -21,3 +23,13 @@ class SingletonModel(models.Model):
     
 class SMS(SingletonModel):
     price = models.FloatField(default=0.8)
+
+class SendingRequest(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    sms = models.BooleanField(default=False)
+    weight = models.FloatField(default=0)
+    destination = models.CharField(max_length=150)
+    amount = models.FloatField(default=0)
+    client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
+    agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    # add range fk later
