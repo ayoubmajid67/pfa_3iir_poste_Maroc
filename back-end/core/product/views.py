@@ -19,9 +19,22 @@ class ProductUpdate(APIView):
     permission_classes = [IsAdmin]
 
     def patch(self, request, id):
-        # prevent sequence from being updated
-        if "sequence" in request.data:
-            del request.data["sequence"]
+        try:
+            # prevent sequence from being updated manually
+            if "sequence" in request.data:
+                del request.data["sequence"]
 
-        product = Product.objects.get(id=id)
-        serializer = ProductSerializer(product, data=request.data, partial=True)   
+            product = Product.objects.get(id=id)
+            if product is None:
+                return Response({"error": "Product not found"}, status=404)
+            
+            serializer = ProductSerializer(product, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"message": "Product updated successfully", "product": serializer.data}, status=200)
+            return Response({"error": serializer.errors}, status=400)
+             
+        except Product.DoesNotExist:
+            return Response({"error": "Product not found"}, status=404)
+        
+
