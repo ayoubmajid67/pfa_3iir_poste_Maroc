@@ -43,3 +43,4 @@ class SendingRequest(models.Model):
     reference = models.CharField(max_length=200, unique=True) # code + sequence taken from the product
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
     delivery_time = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

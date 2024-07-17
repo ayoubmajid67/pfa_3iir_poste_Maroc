@@ -9,6 +9,8 @@ from product.models import Product
 from custom_user.serializers import ClientSerializer
 from weight_range.models import Weight_range
 from .models import SMS
+from django.utils import timezone
+from datetime import timedelta
 
 # helper function to get the sms fee
 def sms_fee():
@@ -88,7 +90,12 @@ class CancelRequest(APIView):
     def patch(self, request, id):
         try:
             record = SendingRequest.objects.get(id=id)
-            record.delete()
+            # check the request creation time before canceling it
+            if record.created_at < timezone.now() - timedelta(hours=12):
+                return Response({"error": "You can't cancel the request"}, status=400)
+            
+            record.status = "canceled"
+            record.save()
             return Response({"message": "Request deleted successfully"}, status=200)
         except SendingRequest.DoesNotExist:
             return Response({"error": "Request does not exist"}, status=404)
