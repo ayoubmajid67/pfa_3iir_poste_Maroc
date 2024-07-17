@@ -11,6 +11,7 @@ from weight_range.models import Weight_range
 from .models import SMS
 from django.utils import timezone
 from datetime import timedelta
+from office.models import Office
 
 # helper function to get the sms fee
 def sms_fee():
@@ -100,3 +101,11 @@ class CancelRequest(APIView):
         except SendingRequest.DoesNotExist:
             return Response({"error": "Request does not exist"}, status=404)
         
+class OfficeSendRequestList(APIView):
+    permission_classes = [IsAgent|IsManager]
+    def get(self, request):
+        office_id = request.user.office
+        data = SendingRequest.objects.filter(agent__office=office_id)
+
+        serializer = SendingRequestSerializer(data, many=True)
+        return Response(serializer.data, status=200)
