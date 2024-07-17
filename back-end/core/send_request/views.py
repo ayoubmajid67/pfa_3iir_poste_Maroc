@@ -81,3 +81,15 @@ class SendRequest(APIView):
                 return Response({"error": record.errors}, status=400)
         else:
             insert_record(client.id, request)
+
+
+class CancelRequest(APIView):
+    permission_classes = [IsManager]
+    def patch(self, request, id):
+        try:
+            record = SendingRequest.objects.get(id=id)
+            record.delete()
+            return Response({"message": "Request deleted successfully"}, status=200)
+        except SendingRequest.DoesNotExist:
+            return Response({"error": "Request does not exist"}, status=404)
+        
