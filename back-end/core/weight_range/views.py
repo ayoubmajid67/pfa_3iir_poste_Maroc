@@ -7,8 +7,11 @@ from .serializers import WeightRangeSerializer
 from product.models import Product
 
 # helper function to check if a weight range is overlapping with an existing range
-def range_status(min, max):
-    for range in Weight_range.objects.all():
+def range_status(min, max, current_range_id=None):
+    # exclude the current range if it is being updated
+    ranges = Weight_range.objects.exclude(id=current_range_id) if current_range_id else Weight_range.objects.all()
+
+    for range in ranges :
         # check of the range interval is overlapping with an existing range
         # there are 4 cases to consider:
         c1 = min >= range.min_weight and max <= range.max_weight # 1. the new range is inside the existing range
@@ -32,7 +35,7 @@ class WeightRangeView(APIView):
     def post(self, request):
         
         request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'])
-        
+
         serializer = WeightRangeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -45,6 +48,19 @@ class WeightRangeView(APIView):
             return Response({"error": "Weight range id is required"}, status=400)
         try:
             weight_range = Weight_range.objects.get(id=id)
+
+            # both range limits provided
+            if "min_weight" in request.data and "max_weight" in request.data:
+                request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'], weight_range.id)
+            
+            # only min_weight provided
+            elif "min_weight" in request.data:
+                request.data['status'] = range_status(request.data['min_weight'], weight_range.max_weight, weight_range.id)
+            
+            # only max_weight provided
+            elif "max_weight" in request.data:
+                request.data['status'] = range_status(weight_range.min_weight, request.data['max_weight'], weight_range.id)
+
             serializer = WeightRangeSerializer(weight_range, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -62,7 +78,21 @@ class ActiveWeightRangeList(APIView):
         return Response(serializer.data)
     
 class ProductWeightRanges(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdmin]
+
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        if not id:
+            return Response({"error": "Product id is required"}, status=400)
+        try:
+            weight_ranges = Weight_range.objects.filter(product=id, status='activated')
+            serializer = WeightRangeSerializer(weight_ranges, many=True)
+            return Response(serializer.data)
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=404)
+        
+class ActiveProductWeightRanges(APIView):
+    permission_classes = [IsAgent|IsManager]
 
     def get(self, request, *args, **kwargs):
         id = kwargs.get('id')
