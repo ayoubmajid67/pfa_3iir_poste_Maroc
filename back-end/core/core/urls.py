@@ -23,4 +23,5 @@ urlpatterns = [
     path('api/', include('custom_user.urls')),
     path('api/', include('office.urls')),
     path('api/', include('product.urls')),
+    path('api/', include('weight_range.urls')),
 ]

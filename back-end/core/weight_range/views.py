@@ -4,11 +4,12 @@ from custom_user.permissions import *
 from .models import Weight_range, RANGE_STATUS
 from .serializers import WeightRangeSerializer
 from product.models import Product
+from product.serializers import ProductSerializer
 
 # helper function to check if a weight range is overlapping with an existing range
-def range_status(min, max, current_range_id=None):
+def range_status(min, max, product, current_range_id=None):
     # exclude the current range if it is being updated
-    ranges = Weight_range.objects.exclude(id=current_range_id) if current_range_id else Weight_range.objects.all()
+    ranges = Weight_range.objects.exclude(id=current_range_id) if current_range_id else Weight_range.objects.filter(product=product)
 
     for range in ranges :
         # check of the range interval is overlapping with an existing range
@@ -32,33 +33,42 @@ class WeightRangeView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        
-        request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'])
+        if not request.data['product']:
+            return Response({"error": "Product id is required"}, status=400)
+        try:
+            product = Product.objects.get(id=request.data['product']).id
 
-        serializer = WeightRangeSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'], product)
+
+            serializer = WeightRangeSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=404)
     
     def patch(self, request, *args, **kwargs):
         id = kwargs.get('id')
         if not id:
             return Response({"error": "Weight range id is required"}, status=400)
+        if not request.data['product']:
+            return Response({"error": "Product id is required"}, status=400)
         try:
             weight_range = Weight_range.objects.get(id=id)
+            product = Product.objects.get(id=request.data['product']).id
 
             # both range limits provided
             if "min_weight" in request.data and "max_weight" in request.data:
-                request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'], weight_range.id)
+                request.data['status'] = range_status(request.data['min_weight'], request.data['max_weight'], product, weight_range.id)
             
             # only min_weight provided
             elif "min_weight" in request.data:
-                request.data['status'] = range_status(request.data['min_weight'], weight_range.max_weight, weight_range.id)
+                request.data['status'] = range_status(request.data['min_weight'], weight_range.max_weight, product, weight_range.id)
             
             # only max_weight provided
             elif "max_weight" in request.data:
-                request.data['status'] = range_status(weight_range.min_weight, request.data['max_weight'], weight_range.id)
+                request.data['status'] = range_status(weight_range.min_weight, request.data['max_weight'], product, weight_range.id)
 
             serializer = WeightRangeSerializer(weight_range, data=request.data, partial=True)
             if serializer.is_valid():
@@ -67,6 +77,8 @@ class WeightRangeView(APIView):
             return Response(serializer.errors, status=400)
         except Weight_range.DoesNotExist:
             return Response({"error": "Weight range does not exist"}, status=404)
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=404)
     
 class ActiveWeightRangeList(APIView):
     permission_classes = [IsAgent|IsManager]
@@ -76,7 +88,7 @@ class ActiveWeightRangeList(APIView):
         serializer = WeightRangeSerializer(weight_ranges, many=True)
         return Response(serializer.data)
     
-class ProductWeightRanges(APIView):
+class AllProductWeightRanges(APIView):
     permission_classes = [IsAdmin]
 
     def get(self, request, *args, **kwargs):
@@ -84,7 +96,7 @@ class ProductWeightRanges(APIView):
         if not id:
             return Response({"error": "Product id is required"}, status=400)
         try:
-            weight_ranges = Weight_range.objects.filter(product=id, status='activated')
+            weight_ranges = Weight_range.objects.filter(product=id)
             serializer = WeightRangeSerializer(weight_ranges, many=True)
             return Response(serializer.data)
         except Product.DoesNotExist:
@@ -109,7 +121,25 @@ class GetWeightPrice(APIView):
 
     def get(self, request):
         try:
-            price = Weight_range.objects.get(product=request.data['product_id'], min_weight__lte=request.data['weight'], max_weight__gte=request.data['weight'], status='activated').price
-            return Response({"price": price}, status=200)
+            product = Product.objects.filter(id=request.data['product']).first()
+
+            range = Weight_range.objects.filter(
+                product=product.id, 
+                status='activated',
+                max_weight__gte=request.data["weight"],
+                min_weight__lte=request.data["weight"]
+            ).first()
+
+            if range is None:
+                return Response({"error": "Weight range might be disabled or not found"}, status=404)
+            
+            return Response({
+                "product": product.name,
+                "requested_weight": request.data["weight"],
+                "price": range.price
+            }, status=200)
+
         except Weight_range.DoesNotExist:
             return Response({"error": "Weight range not found"}, status=404)
+        except Product.DoesNotExist:
+            return Response({"error": "Product does not exist"}, status=404)
