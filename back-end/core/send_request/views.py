@@ -99,7 +99,11 @@ class CancelRequest(APIView):
             
             record.status = "canceled"
             record.save()
-            return Response({"message": "Request deleted successfully"}, status=200)
+            return Response({
+                "message": "Request cancelled",
+                "request": SendingRequestSerializer(record).data
+            }, status=200)
+        
         except SendingRequest.DoesNotExist:
             return Response({"error": "Request does not exist"}, status=404)
         
