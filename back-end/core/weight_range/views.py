@@ -1,6 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from custom_user.permissions import *
 from .models import Weight_range, RANGE_STATUS
 from .serializers import WeightRangeSerializer
@@ -105,13 +104,12 @@ class ActiveProductWeightRanges(APIView):
         except Product.DoesNotExist:
             return Response({"error": "Product does not exist"}, status=404)
         
-class GetPrice(APIView):
-    permission_classes = [IsAuthenticated]
+class GetWeightPrice(APIView):
+    permission_classes = [IsAgent]
 
-    def get(self, request, *args, **kwargs):
-        
+    def get(self, request):
         try:
-            weight_range = Weight_range.objects.get(id=request.data['weight_range_id'])
-            return Response({"price": weight_range.price})
+            price = Weight_range.objects.get(product=request.data['product_id'], min_weight__lte=request.data['weight'], max_weight__gte=request.data['weight']).price
+            return Response({"price": price}, status=200)
         except Weight_range.DoesNotExist:
-            return Response({"error": "Weight range does not exist"}, status=404)
+            return Response({"error": "Weight range not found"}, status=404)
