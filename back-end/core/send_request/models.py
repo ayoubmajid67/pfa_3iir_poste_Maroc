@@ -27,10 +27,11 @@ class SMS(SingletonModel):
 
 class SendingRequest(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    sms = models.BooleanField(default=False)
-    weight = models.FloatField(default=0)
+    sms = models.BooleanField()
+    weight = models.FloatField()
     destination = models.CharField(max_length=150)
-    amount = models.FloatField(default=0)
+    amount = models.FloatField()
     client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     agent = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     range = models.ForeignKey(Weight_range, on_delete=models.SET_NULL, null=True)
+    reference = models.CharField(max_length=200, unique=True) # code + sequence taken from the product

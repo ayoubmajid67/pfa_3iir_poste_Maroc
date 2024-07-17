@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from custom_user.permissions import *
 from .models import SendingRequest
-from .serializers import RequestSerializer
+from .serializers import SendingRequestSerializer
 from custom_user.models import Client, User
 from product.models import Product
 from custom_user.serializers import ClientSerializer
@@ -27,7 +27,7 @@ def insert_record(client, request):
         "range": range.id,
     }
 
-    serializer = RequestSerializer(data=record)
+    serializer = SendingRequestSerializer(data=record)
             
     if serializer.is_valid():
         serializer.save()

@@ -25,5 +25,6 @@ urlpatterns = [
         path('', include('office.urls')),
         path('', include('product.urls')),
         path('', include('weight_range.urls')),
+        path('', include('send_request.urls')),
     ])),
 ]
