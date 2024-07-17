@@ -1,6 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import AccessToken
 from custom_user.permissions import *
 from .models import User, Client, STAFF_ROLES, STAFF_STATUS
 from .serializers import *
@@ -176,3 +179,29 @@ class ClientInfo(APIView):
         
         except Client.DoesNotExist:
             return Response({"error": "Client not found"}, status=404)
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            # Get the access token from the header
+            token_str = request.headers["Authorization"].split()[1]
+            # Decode the token to get its id (jti)
+            token = AccessToken(token_str)
+            jti = token['jti'] # jti stands for JWT ID
+            # Check if the token is already outstanding
+            try:
+                token = OutstandingToken.objects.get(jti=jti)
+                # Blacklist the token
+                BlacklistedToken.objects.create(token=token)
+                return Response({"message": "Logged out successfully"}, status=200)
+            except OutstandingToken.DoesNotExist:
+                return Response({"error": "Token not found or already blacklisted"}, status=404)
+        except InvalidToken:
+            return Response({"error": "Invalid token"}, status=400)
+        except TokenError as e:
+            return Response({"error": str(e)}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
