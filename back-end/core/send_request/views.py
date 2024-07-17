@@ -25,7 +25,7 @@ def insert_record(client, request):
         range = Weight_range.objects.get(id=request.data["range"])
 
         amount = request.data["amount"]
-        if request.data["sms"]:
+        if request.data["sms"] == True:
             amount += sms_fee()
 
         reference = product.code + str(product.sequence)
@@ -35,7 +35,7 @@ def insert_record(client, request):
 
         
         record = {
-            "client": client,
+            "client": client.id,
             "product": product.id,
             "agent": user.id,
             "range": range.id,
@@ -49,9 +49,18 @@ def insert_record(client, request):
         serializer = SendingRequestSerializer(data=record)
                 
         if serializer.is_valid():
-            serializer.save()
-            
-            return Response({"message": "Request stored successfully", "request": serializer.data}, status=201)
+            request_info = serializer.save()
+
+            # send receipt data (to be printed)
+            receipt_data = {
+                "date": request_info.created_at,
+                "request": request_info.id,
+                "reference": request_info.reference,
+                "weight": request_info.weight,
+                "client": client.first_name + " " + client.last_name,
+                "amount": request_info.amount,
+            }
+            return Response({"message": "Request stored successfully", "receipt": receipt_data}, status=201)
         return Response({"error": serializer.errors}, status=400)
     
     except Product.DoesNotExist:
@@ -68,7 +77,7 @@ class SendRequest(APIView):
     def post(self, request):
         try:
             client = Client.objects.get(cin=request.data["cin"])
-            return insert_record(client.id, request)
+            return insert_record(client, request)
         except Client.DoesNotExist:
             # create the client
             data = {
@@ -81,7 +90,7 @@ class SendRequest(APIView):
             record = ClientSerializer(data=data)
             if record.is_valid():
                 client_info = record.save()
-                return insert_record(client_info.id, request)
+                return insert_record(client_info, request)
             else:
                 return Response({"error": record.errors}, status=400)
         except Exception as e:
