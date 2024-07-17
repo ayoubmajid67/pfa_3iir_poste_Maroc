@@ -8,6 +8,7 @@ from office.models import Office
 from office.serializers import OfficeSerializer
 from core.throttling import CustomAnonRateThrottle
 from django.contrib.auth import authenticate
+from core.utils import cin_exists
 
 # create a new staff member
 class Register(APIView):
@@ -138,15 +139,34 @@ class UpdateStaff(APIView):
             return Response({"error": "Office not found"}, status=404)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
-        
-class CheckClientExistance(APIView):
+
+class ClientInfo(APIView):
     permission_classes = [IsAgent]
 
-    def post(self, request):
-        if client_exists(request.data["cin"]):
+    # check if a client exists by their cin
+    def post(self, request, *args, **kwargs):
+        if cin_exists(request.data["cin"]):
             return Response(ClientSerializer(Client.objects.get(cin=request.data["cin"])).data, status=200)
         else:
-            return Response({"error": "Client not found"}, status=404)
+            return Response({"message": "Client not found"}, status=404)
+    
+    # update a client's information
+    def patch(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        if not id:
+            return Response({"error": "no id given in the request"}, status=400)
+        try:
+            client = Client.objects.get(id=id)
+
+            if "cin" in request.data and cin_exists(request.data["cin"], exclude=client.id):
+                return Response({"error": "cin already registered"}, status=400)
+            
+            serializer = ClientSerializer(client, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            
+            return Response(serializer.errors, status=400)
         
-def client_exists(cin):
-    return Client.objects.filter(cin=cin).exists()
+        except Client.DoesNotExist:
+            return Response({"error": "Client not found"}, status=404)

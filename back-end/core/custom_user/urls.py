@@ -7,4 +7,6 @@ urlpatterns = [
     path('staff/', StaffList.as_view(), name='staff_list'),
     path('office-staff/', OfficeStaffList.as_view(), name='office_staff_list'),
     path('staff/update/<int:id>/', UpdateStaff.as_view(), name='staff_update'),
+    path('client/', ClientInfo.as_view(), name='client_info'),  # POST
+    path('client/<int:id>/', ClientInfo.as_view(), name='client_update'),  # PATCH
 ]
