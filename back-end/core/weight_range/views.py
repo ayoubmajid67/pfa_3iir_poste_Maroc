@@ -109,7 +109,7 @@ class GetWeightPrice(APIView):
 
     def get(self, request):
         try:
-            price = Weight_range.objects.get(product=request.data['product_id'], min_weight__lte=request.data['weight'], max_weight__gte=request.data['weight']).price
+            price = Weight_range.objects.get(product=request.data['product_id'], min_weight__lte=request.data['weight'], max_weight__gte=request.data['weight'], status='activated').price
             return Response({"price": price}, status=200)
         except Weight_range.DoesNotExist:
             return Response({"error": "Weight range not found"}, status=404)
