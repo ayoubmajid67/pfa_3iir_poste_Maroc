@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     'django_use_email_as_username.apps.DjangoUseEmailAsUsernameConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
     'custom_user.apps.CustomUserConfig',
     'office',
     'product',
     'send_request',
+    'weight_range',
 ]
 
 MIDDLEWARE = [
@@ -141,7 +143,13 @@ AUTH_USER_MODEL = 'custom_user.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'core.throttling.CustomAnonRateThrottle', # custom throttle class to limit number of login requests to 3 every 30 minutes (used in custom_user/views.py Login class)
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'custom_anon': '3/30m', # 3 requests every 30 minutes
+    }
 }
 
 SIMPLE_JWT = {

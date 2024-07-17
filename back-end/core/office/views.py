@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from custom_user.permissions import *
+from rest_framework.permissions import IsAuthenticated
 from .models import Office
 from .serializers import OfficeSerializer
+from custom_user.permissions import *
 
 # Create your views here.
 class OfficeView(APIView):
@@ -39,7 +40,7 @@ class OfficeList(APIView):
 
 # get the office information of the logged in staff member 
 class OwnOffice(APIView):
-    permission_classes = [IsAdmin|IsManager]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:

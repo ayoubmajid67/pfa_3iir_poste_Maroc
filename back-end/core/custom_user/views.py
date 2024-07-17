@@ -1,11 +1,23 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from rest_framework_simplejwt.tokens import AccessToken
 from custom_user.permissions import *
 from .models import User, Client, STAFF_ROLES, STAFF_STATUS
 from .serializers import *
 from office.models import Office
 from office.serializers import OfficeSerializer
+from core.throttling import CustomAnonRateThrottle
+from django.contrib.auth import authenticate
+
+# a helper function to check if a cin value exists in the database, excluding the client with the given ID
+def cin_exists(cin, exclude=None):
+    queryset = Client.objects.filter(cin=cin)
+    if exclude is not None:
+        queryset = queryset.exclude(id=exclude)
+    return queryset.exists()
 
 # create a new staff member
 class Register(APIView):
@@ -44,26 +56,24 @@ class Register(APIView):
             return Response({"error": "Office does not exist"}, status=404)
 
 class Login(APIView):
+    throttle_classes = [CustomAnonRateThrottle]  # Limit the number of login requests to 3 every 30 minutes
+
     def post(self, request):
-        email = request.data["email"]
-        password = request.data["password"]
+        email = request.data.get("email")
+        password = request.data.get("password")
 
-        user = User.objects.filter(email=email).first()
+        # authenticate built-in function checks if the user exists and the password is correct
+        user = authenticate(request, username=email, password=password)
 
-        if user is None:
-            return Response({"message": "User not found"}, status=404)
-        else:
-            if user.check_password(password):
+        if not user or user.status != 'actif':
+            return Response({"message": "Invalid credentials"}, status=401)
 
-                # generate an access token
-                token = RefreshToken.for_user(user)
-                return Response({
-                    "user": UserSerializer(user).data,
-                    "token": str(token.access_token)
-                }, status=200)
-            
-            else:
-                return Response({'message': 'Invalid credentials'}, status=401)
+        # generate an access token
+        token = RefreshToken.for_user(user)
+        return Response({
+            "user": UserSerializer(user).data,
+            "token": str(token.access_token)
+        }, status=200)
 
 class StaffList(APIView):
     permission_classes = [IsAdmin]
@@ -138,3 +148,60 @@ class UpdateStaff(APIView):
             return Response({"error": "Office not found"}, status=404)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
+
+class ClientInfo(APIView):
+    permission_classes = [IsAgent]
+
+    # check if a client exists by their cin
+    def post(self, request, *args, **kwargs):
+        if cin_exists(request.data["cin"]):
+            return Response(ClientSerializer(Client.objects.get(cin=request.data["cin"])).data, status=200)
+        else:
+            return Response({"message": "Client not found"}, status=404)
+    
+    # update a client's information
+    def patch(self, request, *args, **kwargs):
+        id = kwargs.get('id')
+        if not id:
+            return Response({"error": "no id given in the request"}, status=400)
+        try:
+            client = Client.objects.get(id=id)
+
+            if "cin" in request.data and cin_exists(request.data["cin"], exclude=client.id):
+                return Response({"error": "cin already registered"}, status=400)
+            
+            serializer = ClientSerializer(client, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            
+            return Response(serializer.errors, status=400)
+        
+        except Client.DoesNotExist:
+            return Response({"error": "Client not found"}, status=404)
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            # Get the access token from the header
+            token_str = request.headers["Authorization"].split()[1]
+            # Decode the token to get its id (jti)
+            token = AccessToken(token_str)
+            jti = token['jti'] # jti stands for JWT ID
+            # Check if the token is already outstanding
+            try:
+                token = OutstandingToken.objects.get(jti=jti)
+                # Blacklist the token
+                BlacklistedToken.objects.create(token=token)
+                return Response({"message": "Logged out successfully"}, status=200)
+            except OutstandingToken.DoesNotExist:
+                return Response({"error": "Token not found or already blacklisted"}, status=404)
+        except InvalidToken:
+            return Response({"error": "Invalid token"}, status=400)
+        except TokenError as e:
+            return Response({"error": str(e)}, status=400)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
