@@ -66,8 +66,10 @@ class SendRequest(APIView):
     permission_classes = [IsAgent]
     
     def post(self, request):
-        client = Client.objects.get(cin=request.data["cin"])
-        if client is None:
+        try:
+            client = Client.objects.get(cin=request.data["cin"])
+            return insert_record(client.id, request)
+        except Client.DoesNotExist:
             # create the client
             data = {
                 "cin": request.data["cin"],
@@ -78,12 +80,12 @@ class SendRequest(APIView):
 
             record = ClientSerializer(data=data)
             if record.is_valid():
-                record.save()
-                insert_record(record.id, request)
+                client_info = record.save()
+                return insert_record(client_info.id, request)
             else:
                 return Response({"error": record.errors}, status=400)
-        else:
-            insert_record(client.id, request)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
 
 class CancelRequest(APIView):
