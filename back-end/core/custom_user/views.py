@@ -8,7 +8,13 @@ from office.models import Office
 from office.serializers import OfficeSerializer
 from core.throttling import CustomAnonRateThrottle
 from django.contrib.auth import authenticate
-from core.utils import cin_exists
+
+# a helper function to check if a cin value exists in the database, excluding the client with the given ID
+def cin_exists(cin, exclude=None):
+    queryset = Client.objects.filter(cin=cin)
+    if exclude is not None:
+        queryset = queryset.exclude(id=exclude)
+    return queryset.exists()
 
 # create a new staff member
 class Register(APIView):
