@@ -51,6 +51,9 @@ def insert_record(client, request):
         if serializer.is_valid():
             request_info = serializer.save()
 
+            # get agent info
+            agent_info = User.objects.filter(id=user.id).first()
+
             # send receipt data (to be printed)
             receipt_data = {
                 "date": request_info.created_at,
@@ -59,6 +62,7 @@ def insert_record(client, request):
                 "weight": request_info.weight,
                 "client": client.first_name + " " + client.last_name,
                 "amount": request_info.amount,
+                "agent": agent_info.first_name + " " + agent_info.last_name,
             }
             return Response({"message": "Request stored successfully", "receipt": receipt_data}, status=201)
         return Response({"error": serializer.errors}, status=400)
