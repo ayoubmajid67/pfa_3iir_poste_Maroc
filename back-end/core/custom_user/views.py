@@ -72,7 +72,8 @@ class Login(APIView):
         token = RefreshToken.for_user(user)
         return Response({
             "user": UserSerializer(user).data,
-            "token": str(token.access_token)
+            "access": str(token.access_token),
+            "refresh": str(token)
         }, status=200)
 
 class StaffList(APIView):
@@ -186,22 +187,11 @@ class Logout(APIView):
 
     def post(self, request):
         try:
-            # Get the access token from the header
-            token_str = request.headers["Authorization"].split()[1]
-            # Decode the token to get its id (jti)
-            token = AccessToken(token_str)
-            jti = token['jti'] # jti stands for JWT ID
-            # Check if the token is already outstanding
-            try:
-                token = OutstandingToken.objects.get(jti=jti)
-                # Blacklist the token
-                BlacklistedToken.objects.create(token=token)
-                return Response({"message": "Logged out successfully"}, status=200)
-            except OutstandingToken.DoesNotExist:
-                return Response({"error": "Token not found or already blacklisted"}, status=404)
-        except InvalidToken:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "User logged out successfully"}, status=205)
+        except TokenError:
             return Response({"error": "Invalid token"}, status=400)
-        except TokenError as e:
-            return Response({"error": str(e)}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=400)
