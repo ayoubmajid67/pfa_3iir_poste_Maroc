@@ -44,3 +44,15 @@ class SendingRequest(models.Model):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending')
     delivery_time = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Receipt(models.Model):
+    date = models.DateTimeField()
+    request = models.IntegerField()
+    reference = models.CharField(max_length=255)
+    weight = models.FloatField()
+    client = models.CharField(max_length=255)
+    amount = models.FloatField()
+    agent = models.CharField(max_length=255)
+
+    request = models.ForeignKey(SendingRequest, on_delete=models.CASCADE)

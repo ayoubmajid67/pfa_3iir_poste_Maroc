@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from custom_user.permissions import *
 from .models import SendingRequest
-from .serializers import SendingRequestSerializer
+from .serializers import SendingRequestSerializer, ReceiptSerializer, ReceiptFullDataSerializer, SendingRequestFullDataSerializer
 from custom_user.models import Client, User
 from product.models import Product
 from custom_user.serializers import ClientSerializer
@@ -17,8 +17,7 @@ from office.models import Office
 def sms_fee():
     return SMS.load().price
 
-# helper function to insert a record in the database
-def insert_record(client, request):
+def create_request(client, request):
     try:
         product = Product.objects.get(id=request.data["product"])
         user = User.objects.get(id=request.user.id)
@@ -29,12 +28,12 @@ def insert_record(client, request):
             amount += sms_fee()
 
         reference = product.code + str(product.sequence)
+
         # update the sequence of the product
         product.sequence += 1
         product.save()
 
-        
-        record = {
+        request_record = {
             "client": client.id,
             "product": product.id,
             "agent": user.id,
@@ -46,7 +45,7 @@ def insert_record(client, request):
             "reference": reference,
         }
 
-        serializer = SendingRequestSerializer(data=record)
+        serializer = SendingRequestSerializer(data=request_record)
                 
         if serializer.is_valid():
             request_info = serializer.save()
@@ -54,7 +53,6 @@ def insert_record(client, request):
             # get agent info
             agent_info = User.objects.filter(id=user.id).first()
 
-            # send receipt data (to be printed)
             receipt_data = {
                 "date": request_info.created_at,
                 "request": request_info.id,
@@ -64,7 +62,14 @@ def insert_record(client, request):
                 "amount": request_info.amount,
                 "agent": agent_info.first_name + " " + agent_info.last_name,
             }
-            return Response({"message": "Request stored successfully", "receipt": receipt_data}, status=201)
+            serializer = ReceiptSerializer(data=receipt_data)
+            if serializer.is_valid():
+                receipt_info = serializer.save()
+                return Response({
+                    "message": "Request stored successfully, you can print the receipt",
+                    "receipt": ReceiptFullDataSerializer(receipt_info).data
+                }, status=201)
+            
         return Response({"error": serializer.errors}, status=400)
     
     except Product.DoesNotExist:
@@ -81,7 +86,7 @@ class SendRequest(APIView):
     def post(self, request):
         try:
             client = Client.objects.get(cin=request.data["cin"])
-            return insert_record(client, request)
+            return create_request(client, request)
         except Client.DoesNotExist:
             # create the client
             data = {
@@ -94,7 +99,7 @@ class SendRequest(APIView):
             record = ClientSerializer(data=data)
             if record.is_valid():
                 client_info = record.save()
-                return insert_record(client_info, request)
+                return create_request(client_info, request)
             else:
                 return Response({"error": record.errors}, status=400)
         except Exception as e:

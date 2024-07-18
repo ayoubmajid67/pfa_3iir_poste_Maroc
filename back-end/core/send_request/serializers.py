@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import SendingRequest
+from .models import *
 from product.models import Product
 from custom_user.models import Client, User
 from product.serializers import ProductSerializer
-from custom_user.serializers import ClientSerializer, UserSerializer
+from custom_user.serializers import ClientSerializer, UserWithOfficeSerializer
 
 # a serializer for sending request used for creating a new sending request
 class SendingRequestSerializer(serializers.ModelSerializer):
@@ -19,8 +19,24 @@ class SendingRequestSerializer(serializers.ModelSerializer):
 class SendingRequestFullDataSerializer(serializers.ModelSerializer):
     product = ProductSerializer()
     client = ClientSerializer()
-    agent = UserSerializer()
+    agent = UserWithOfficeSerializer()
     
     class Meta:
         model = SendingRequest
+        fields = '__all__'
+
+# receipt serializer used for creating a new receipt record
+class ReceiptSerializer(serializers.ModelSerializer):
+    request = serializers.PrimaryKeyRelatedField(queryset=SendingRequest.objects.all())
+
+    class Meta:
+        model = Receipt
+        fields = '__all__'
+
+# receipt serializer with full data
+class ReceiptFullDataSerializer(serializers.ModelSerializer):
+    request = SendingRequestFullDataSerializer()
+
+    class Meta:
+        model = Receipt
         fields = '__all__'
