@@ -149,8 +149,8 @@ class GetOwnTransactions(APIView):
     permission_classes = [IsAgent]
     def get(self, request):
 
-        # get the transactions of the agent that are not canceled
-        data = SendingRequest.objects.filter(agent=request.user.id).exclude(status="canceled")
+        # get the transactions of the agent that are not canceled and created today
+        data = SendingRequest.objects.filter(agent=request.user.id, created_at__date=timezone.now().date()).exclude(status="canceled")
 
         serializer = SendingRequestSerializer(data, many=True)
         return Response(serializer.data, status=200)
@@ -159,7 +159,7 @@ class GetAgentTransactions(APIView):
     permission_classes = [IsManager]
     def get(self, request, id):
         try:
-            data = SendingRequest.objects.filter(agent=id).exclude(status="canceled")
+            data = SendingRequest.objects.filter(agent=id, created_at__date=timezone.now().date()).exclude(status="canceled")
             if not len(data):
                 return Response({"message": "Agent has no transactions"}, status=404)
             serializer = SendingRequestSerializer(data, many=True)
