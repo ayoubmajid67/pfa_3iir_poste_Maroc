@@ -1,17 +1,14 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from custom_user.permissions import *
-from .models import SendingRequest
-from .serializers import SendingRequestSerializer, ReceiptSerializer, ReceiptFullDataSerializer, SendingRequestFullDataSerializer
+from .models import SendingRequest, SMS, Receipt
+from .serializers import *
 from custom_user.models import Client, User
 from product.models import Product
 from custom_user.serializers import ClientSerializer
 from weight_range.models import Weight_range
-from .models import SMS
 from django.utils import timezone
 from datetime import timedelta
-from office.models import Office
 
 # helper function to get the sms fee
 def sms_fee():
@@ -133,3 +130,17 @@ class OfficeSendRequestList(APIView):
 
         serializer = SendingRequestSerializer(data, many=True)
         return Response(serializer.data, status=200)
+    
+class PrintReceipt(APIView):
+    permission_classes = [IsAgent|IsManager]
+    def get(self, request, id):
+        try:
+            request_data = SendingRequest.objects.filter(id=id).first()
+            if request_data is None:
+                return Response({"error": "Request does not exist"}, status=404)
+            receipt = Receipt.objects.filter(request=request_data.id).first()
+
+            return Response(ReceiptFullDataSerializer(receipt).data, status=200)
+
+        except Receipt.DoesNotExist:
+            return Response({"error": "Receipt does not exist"}, status=404)
