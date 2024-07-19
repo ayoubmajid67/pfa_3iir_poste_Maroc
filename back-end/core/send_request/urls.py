@@ -8,4 +8,5 @@ urlpatterns = [
     path('receipt_print/<int:id>/', PrintReceipt.as_view(), name="receipt_print"),
     path('transactions/', GetOwnTransactions.as_view(), name="transactions"),
     path('transactions/<int:id>/', GetAgentTransactions.as_view(), name="agent_transactions"),
+    path('transactions-dashboard/', GetFullTransactions.as_view(), name="transactions-dashboard"),
 ]

@@ -9,6 +9,7 @@ from custom_user.serializers import ClientSerializer
 from weight_range.models import Weight_range
 from django.utils import timezone
 from datetime import timedelta
+from django.db.models import Sum
 
 # helper function to get the sms fee
 def sms_fee():
@@ -166,3 +167,32 @@ class GetAgentTransactions(APIView):
             return Response(serializer.data, status=200)
         except User.DoesNotExist:
             return Response({"error": "Agent does not exist"}, status=404)
+
+class GetFullTransactions(APIView):
+    permission_classes = [IsManager]
+    def get(self, request):
+        
+        # sum the amount of transactions per agent
+        transactions = SendingRequest.objects.filter(
+            created_at__date= timezone.now().date()
+        ).exclude(status="canceled").values(
+            "agent__id",
+            "agent__first_name",
+            "agent__last_name",
+        ).annotate( # annotate is used to perform the aggregation
+            total_amount=Sum("amount")
+        )
+        
+        transactions_list = []
+        for transaction in transactions:
+            transactions_list.append({
+                "agent": {
+                    "id": transaction["agent__id"],
+                    "first_name": transaction["agent__first_name"],
+                    "last_name": transaction["agent__last_name"],
+                },
+                "amount": transaction["total_amount"]
+            })
+
+        serializer = AgentTransactionsSerializer(transactions_list, many=True)
+        return Response(serializer.data, status=200)
