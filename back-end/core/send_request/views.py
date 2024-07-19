@@ -144,3 +144,13 @@ class PrintReceipt(APIView):
 
         except Receipt.DoesNotExist:
             return Response({"error": "Receipt does not exist"}, status=404)
+        
+class GetOwnTransactions(APIView):
+    permission_classes = [IsAgent]
+    def get(self, request):
+        
+        # get the transactions of the agent that are not canceled
+        data = SendingRequest.objects.filter(agent=request.user.id).exclude(status="canceled")
+
+        serializer = SendingRequestSerializer(data, many=True)
+        return Response(serializer.data, status=200)
