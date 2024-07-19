@@ -7,4 +7,5 @@ urlpatterns = [
     path('requests_list/', OfficeSendRequestList.as_view(), name="requests_list"),
     path('receipt_print/<int:id>/', PrintReceipt.as_view(), name="receipt_print"),
     path('transactions/', GetOwnTransactions.as_view(), name="transactions"),
+    path('transactions/<int:id>/', GetAgentTransactions.as_view(), name="agent_transactions"),
 ]
