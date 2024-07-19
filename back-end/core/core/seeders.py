@@ -5,6 +5,7 @@ from custom_user.factories import UserFactory
 from office.factories import OfficeFactory
 from weight_range.models import Weight_range
 from product.models import Product
+from office.models import Office
 
 # package product record (colis)
 ProductFactory.create(
@@ -51,3 +52,17 @@ for _ in range(0, 10000, range_length):
     )
     min_weight += range_length
     range_price += 10
+
+# admin user (just for testing)
+admin = UserFactory.build(
+    email = "admintest@mail.com",
+    password = None,
+    first_name="Admin",
+    last_name="Admin",
+    cin="99999999",
+    role="admin",
+    status="actif",
+    office = Office.objects.get(id=2)
+)
+admin.set_password("testtest")  # Hash the password
+admin.save()
