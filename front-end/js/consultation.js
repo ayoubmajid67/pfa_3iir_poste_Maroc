@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
     const cancelAllBtn = document.getElementById('cancelAllBtn');
+    const calculateTotalBtn = document.getElementById('calculateTotalBtn');
     const analyticsSection = document.getElementById('analytics');
     const analyticsTableBody = document.getElementById('analyticsTableBody');
+    const totalMontantDiv = document.getElementById('totalMontant');
     let chart = null;  // Declare a variable to hold the chart instance
     let data = [];  // Store the data globally
 
@@ -13,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (startDate && endDate) {
             // Mock data, replace this with actual data fetching logic
             data = [
-                { office: 'Office 1', dateDepot: '2024-07-01', cinAgent: '1234', cinSender: '5678', cinReceiver: '9101', poids: '5kg', montant: '$100' },
-                { office: 'Office 2', dateDepot: '2024-07-02', cinAgent: '2234', cinSender: '6678', cinReceiver: '9201', poids: '10kg', montant: '$300' },
+                { office: 'Office 1', dateDepot: '2024-07-01', cinAgent: '1234', cinSender: '5678', cinReceiver: '9101', poids: '5kg', montant: '100 MAD' },
+                { office: 'Office 2', dateDepot: '2024-07-02', cinAgent: '2234', cinSender: '6678', cinReceiver: '9201', poids: '10kg', montant: '300 MAD' },
                 // Add more mock data as needed
             ];
 
@@ -51,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     labels: data.map(item => item.dateDepot),
                     datasets: [{
                         label: 'Montant',
-                        data: data.map(item => parseFloat(item.montant.replace('$', ''))),
+                        data: data.map(item => parseFloat(item.montant.replace(' MAD', ''))),
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
                         borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
@@ -93,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update the chart
         chart.data.labels = data.map(item => item.dateDepot);
-        chart.data.datasets[0].data = data.map(item => parseFloat(item.montant.replace('$', '')));
+        chart.data.datasets[0].data = data.map(item => parseFloat(item.montant.replace(' MAD', '')));
         chart.update();
     };
 
@@ -112,5 +114,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Hide the analytics section
         analyticsSection.classList.add('hidden');
+
+        // Clear the total montant
+        totalMontantDiv.innerHTML = '';
+    });
+
+    calculateTotalBtn.addEventListener('click', function() {
+        // Calculate the total montant
+        const totalMontant = data.reduce((total, item) => {
+            return total + parseFloat(item.montant.replace(' MAD', ''));
+        }, 0);
+
+        // Display the total montant
+        totalMontantDiv.innerHTML = `<strong>Total Montant: ${totalMontant} MAD</strong>`;
     });
 });

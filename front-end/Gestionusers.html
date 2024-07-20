@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Utilisateurs</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/Gestionusers.css">
+
+</head>
+<body>
+            <!-- Navbar -->
+<div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
+    <div class="flex items-center w-1/3">
+        <a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10"></a>
+    </div>
+    <div class="flex items-center w-1/3">
+        <span class="text-black text-lg">Poste de Maroc</span>
+    </div>
+    <div class="flex justify-center w-1/3">
+        <span class="text-black text-lg">userName</span>
+    </div>
+    <div class="flex justify-end w-1/3">
+        <span class="text-black text-lg">status (admin, chef, agent)</span>
+    </div>
+</div>
+
+    <div class="container">
+        <h1 class="text-center my-4">Gestion des Utilisateurs</h1>
+
+        <!-- Office Number Input Section -->
+        <div class="box mb-4">
+            <div class="form-group row justify-content-center">
+                <div class="col-md-6">
+                    <label for="officeNumber">N° Office:</label>
+                    <input type="number" id="officeNumber" class="form-control" placeholder="Enter office number">
+                </div>
+                <div class="col-md-2 mt-4">
+                    <button id="searchBtn" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Table Section -->
+        <div class="box">
+            <div id="userTableSection" class="hidden">
+                <h2 class="text-center">Users</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>CIN</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Office</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add User Section -->
+        <div class="box mt-4">
+            <h2 class="text-center">Ajouter un Agent</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="cin">CIN:</label>
+                    <input type="text" id="cin" class="form-control" placeholder="Enter CIN" required>
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" class="form-control" placeholder="Enter first name" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" class="form-control" placeholder="Enter last name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role" class="form-control" required>
+                        <option value="Chef Agence">Chef Agence</option>
+                        <option value="Agent">Agent</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="office">Office:</label>
+                    <input type="number" id="office" class="form-control" placeholder="Enter office number" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Ajouter Agent</button>
+            </form>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editUserModalLabel">Modifier l'Agent</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editUserForm">
+                            <input type="hidden" id="editIndex">
+                            <div class="form-group">
+                                <label for="editCin">CIN:</label>
+                                <input type="text" id="editCin" class="form-control" placeholder="Enter CIN" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="editFirstName">First Name:</label>
+                                <input type="text" id="editFirstName" class="form-control" placeholder="Enter first name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editLastName">Last Name:</label>
+                                <input type="text" id="editLastName" class="form-control" placeholder="Enter last name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editEmail">Email:</label>
+                                <input type="email" id="editEmail" class="form-control" placeholder="Enter email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editRole">Role:</label>
+                                <select id="editRole" class="form-control" required>
+                                    <option value="Chef Agence">Chef Agence</option>
+                                    <option value="Agent">Agent</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editOffice">Office:</label>
+                                <input type="number" id="editOffice" class="form-control" placeholder="Enter office number" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Enregistrement réussi!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/Gestionusers.js"></script>
+</body>
+</html>

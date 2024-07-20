@@ -1,25 +1,27 @@
 body {
-    background-color: #f4f4f452;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
-    font-family: Arial, sans-serif;
-    margin-top: 100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+
 }
 
 .container {
     padding: 20px;
+    margin-top: 80px;
 }
 
 .box {
     background: #fff;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-top: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
 }
 
-.hidden {
-    display: none;
+h1, h2 {
+    color: #333;
 }
 
 h2 {
@@ -42,24 +44,25 @@ h2 {
 
 .table th, .table td {
     border-top: none;
+    vertical-align: middle;
 }
 
 .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
     color: white;
-    border-radius: 8px;
+    border-radius: 5px;
     margin-top: 10px; /* Add top margin to the submit button */
 }
 
 .btn-primary:hover {
-    background-color: var(--secondaryColor);
+    background-color: #0056b3;
     border-color: #0056b3;
 }
 
 .btn-warning, .btn-danger, .btn-warning.modify-save {
-    background-color:var(--primaryColor);
-    border-color: var(--primaryColor);
+    background-color: #ed731d;
+    border-color: #ed731d;
     color: white;
     border-radius: 5px;
 }
@@ -70,13 +73,27 @@ h2 {
 }
 
 .btn-success {
-    background-color: var(--fourthColor);
-    border-color: var(--fourthColor);
+    background-color: #28a745;
+    border-color: #28a745;
     color: white;
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 .btn-success:hover {
-    background-color: var(--fourthColor);
+    background-color: #218838;
     border-color: #218838;
+}
+
+.form-control {
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+input::placeholder {
+    color: #bbb;
+}
+
+input:focus, select:focus, textarea:focus, button:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
