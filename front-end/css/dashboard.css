@@ -54,6 +54,9 @@ body {
 .sidebar-button:hover {
     background: #2d3748; /* Tailwind's bg-gray-700 */
 }
+.deconnexion-button {
+    background-color:var(--primaryColor);
+}
 
 .main-content {
     margin-left: 200px; /* Match the width of the sidebar */

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchBtn = document.getElementById('searchBtn');
+    const showAllBtn = document.getElementById('showAllBtn');
     const userTableSection = document.getElementById('userTableSection');
     const userTableBody = document.getElementById('userTableBody');
     const addUserForm = document.getElementById('addUserForm');
@@ -10,37 +11,45 @@ document.addEventListener('DOMContentLoaded', function() {
     ];  // Initial example users
     let deletedUsers = []; // Track deleted users
 
+    function renderTable(data) {
+        userTableBody.innerHTML = '';
+
+        data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="py-2 px-4 border">${item.cin}</td>
+                <td class="py-2 px-4 border">${item.firstName}</td>
+                <td class="py-2 px-4 border">${item.lastName}</td>
+                <td class="py-2 px-4 border">${item.email}</td>
+                <td class="py-2 px-4 border">${item.role}</td>
+                <td class="py-2 px-4 border">${item.office}</td>
+                <td class="py-2 px-4 border text-center">
+                    <button class="btn btn-warning" onclick="showEditUserModal(${index})">Modifier</button>
+                    <button class="btn btn-danger" onclick="deleteUser(${index}, this)">Supprimer</button>
+                </td>
+            `;
+            userTableBody.appendChild(row);
+        });
+
+        userTableSection.classList.remove('hidden');
+    }
+
     searchBtn.addEventListener('click', function() {
         const officeNumber = document.getElementById('officeNumber').value;
 
         if (officeNumber) {
-            // Clear previous data
-            userTableBody.innerHTML = '';
-
-            // Populate table with data
-            userData.filter(user => user.office === officeNumber && !deletedUsers.includes(user.cin))
-                .forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.cin}</td>
-                        <td>${item.firstName}</td>
-                        <td>${item.lastName}</td>
-                        <td>${item.email}</td>
-                        <td>${item.role}</td>
-                        <td>${item.office}</td>
-                        <td>
-                            <button class="btn btn-warning" onclick="showEditUserModal(${index})">Modifier</button>
-                            <button class="btn btn-danger" onclick="deleteUser(${index}, this)">Supprimer</button>
-                        </td>
-                    `;
-                    userTableBody.appendChild(row);
-                });
-
-            // Show user table section
-            userTableSection.classList.remove('hidden');
+            // Filter and render table
+            const filteredData = userData.filter(user => user.office === officeNumber && !deletedUsers.includes(user.cin));
+            renderTable(filteredData);
         } else {
             alert('Please enter an office number.');
         }
+    });
+
+    showAllBtn.addEventListener('click', function() {
+        // Filter and render table with all users
+        const allData = userData.filter(user => !deletedUsers.includes(user.cin));
+        renderTable(allData);
     });
 
     addUserForm.addEventListener('submit', function(event) {
@@ -62,6 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show success message
         $('#successModal').modal('show');
+
+        // Re-render the table to show the newly added user
+        renderTable(userData);
     });
 
     window.showEditUserModal = function(index) {
@@ -91,6 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show success message
         $('#successModal').modal('show');
+
+        // Re-render the table to show the updated user
+        renderTable(userData);
     });
 
     window.deleteUser = function(index, button) {
@@ -106,5 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Show success message
         $('#successModal').modal('show');
+
+        // Re-render the table
+        renderTable(userData);
     };
 });

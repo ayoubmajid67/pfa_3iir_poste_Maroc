@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Utilisateurs</title>
+    <title>Gestion des Offices</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/Gestionusers.css">
+    <link rel="stylesheet" href="css/GestionOffice.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -27,14 +27,14 @@
     </div>
 
     <div class="container">
-        <h1 class="text-center my-4">Gestion des Utilisateurs</h1>
+        <h1 class="text-center my-4">Gestion des Offices</h1>
 
         <!-- Office Number Input Section -->
         <div class="box mb-4">
             <div class="form-group row justify-content-center">
                 <div class="col-md-6">
                     <label for="officeNumber">N° Office:</label>
-                    <input type="number" id="officeNumber" class="form-control" placeholder="Enter office number">
+                    <input type="number" id="officeNumber" class="form-control" placeholder="Enter office number" required>
                 </div>
                 <div class="col-md-2 mt-4">
                     <button id="searchBtn" class="btn btn-primary w-100">Search</button>
@@ -42,106 +42,82 @@
             </div>
         </div>
 
-        <!-- User Table Section -->
+        <!-- Office Table Section -->
         <div class="box">
-            <div id="userTableSection" class="hidden">
-                <h2 class="text-center">Users</h2>
+            <div id="officeTableSection" class="hidden">
+                <h2 class="text-center">Offices</h2>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped">
                         <thead class="thead-dark">
                             <tr>
-                                <th>CIN</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Office</th>
+                                <th>N° Office</th>
+                                <th>Nom Office</th>
+                                <th>Adresse</th>
+                                <th>Ville</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="userTableBody">
+                        <tbody id="officeTableBody">
                             <!-- Data will be inserted here -->
                         </tbody>
                     </table>
                 </div>
                 <div class="text-center mt-4">
-                    <button id="showAllBtn" class="btn btn-secondary">Show All Users</button>
+                    <button id="showAllBtn" class="btn btn-secondary">Show All Offices</button>
                 </div>
             </div>
         </div>
 
-        <!-- Add User Section -->
+        <!-- Add Office Section -->
         <div class="box mt-4">
-            <h2 class="text-center">Ajouter un Agent</h2>
-            <form id="addUserForm">
+            <h2 class="text-center">Ajouter un Office</h2>
+            <form id="addOfficeForm">
                 <div class="form-group">
-                    <label for="cin">CIN:</label>
-                    <input type="text" id="cin" class="form-control" placeholder="Enter CIN" required>
+                    <label for="officeNumberAdd">N° Office:</label>
+                    <input type="number" id="officeNumberAdd" class="form-control" placeholder="Enter office number" required>
                 </div>
                 <div class="form-group">
-                    <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" class="form-control" placeholder="Enter first name" required>
+                    <label for="officeNameAdd">Nom Office:</label>
+                    <input type="text" id="officeNameAdd" class="form-control" placeholder="Enter office name" required>
                 </div>
                 <div class="form-group">
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" class="form-control" placeholder="Enter last name" required>
+                    <label for="officeAddressAdd">Adresse:</label>
+                    <input type="text" id="officeAddressAdd" class="form-control" placeholder="Enter address" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+                    <label for="officeCityAdd">Ville:</label>
+                    <input type="text" id="officeCityAdd" class="form-control" placeholder="Enter city" required>
                 </div>
-                <div class="form-group">
-                    <label for="role">Role:</label>
-                    <select id="role" class="form-control" required>
-                        <option value="Chef Agence">Chef Agence</option>
-                        <option value="Agent">Agent</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="office">Office:</label>
-                    <input type="number" id="office" class="form-control" placeholder="Enter office number" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Ajouter Agent</button>
+                <button type="submit" class="btn btn-success w-100">Ajouter Office</button>
             </form>
         </div>
 
-        <!-- Edit User Modal -->
-        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <!-- Edit Office Modal -->
+        <div class="modal fade" id="editOfficeModal" tabindex="-1" aria-labelledby="editOfficeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editUserModalLabel">Modifier l'Agent</h5>
+                        <h5 class="modal-title" id="editOfficeModalLabel">Modifier l'Office</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="editUserForm">
+                        <form id="editOfficeForm">
                             <input type="hidden" id="editIndex">
                             <div class="form-group">
-                                <label for="editCin">CIN:</label>
-                                <input type="text" id="editCin" class="form-control" placeholder="Enter CIN" disabled>
+                                <label for="editOfficeNumber">N° Office:</label>
+                                <input type="text" id="editOfficeNumber" class="form-control" placeholder="Enter office number" disabled>
                             </div>
                             <div class="form-group">
-                                <label for="editFirstName">First Name:</label>
-                                <input type="text" id="editFirstName" class="form-control" placeholder="Enter first name" required>
+                                <label for="editOfficeName">Nom Office:</label>
+                                <input type="text" id="editOfficeName" class="form-control" placeholder="Enter office name" required>
                             </div>
                             <div class="form-group">
-                                <label for="editLastName">Last Name:</label>
-                                <input type="text" id="editLastName" class="form-control" placeholder="Enter last name" required>
+                                <label for="editOfficeAddress">Adresse:</label>
+                                <input type="text" id="editOfficeAddress" class="form-control" placeholder="Enter address" required>
                             </div>
                             <div class="form-group">
-                                <label for="editEmail">Email:</label>
-                                <input type="email" id="editEmail" class="form-control" placeholder="Enter email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="editRole">Role:</label>
-                                <select id="editRole" class="form-control" required>
-                                    <option value="Chef Agence">Chef Agence</option>
-                                    <option value="Agent">Agent</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="editOffice">Office:</label>
-                                <input type="number" id="editOffice" class="form-control" placeholder="Enter office number" required>
+                                <label for="editOfficeCity">Ville:</label>
+                                <input type="text" id="editOfficeCity" class="form-control" placeholder="Enter city" required>
                             </div>
                             <button type="submit" class="btn btn-warning w-100">Save Changes</button>
                         </form>
@@ -169,6 +145,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="js/Gestionusers.js"></script>
+    <script src="js/GestionOffice.js"></script>
 </body>
 </html>
