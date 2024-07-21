@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Offices</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/GestionOffice.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
+        <div class="flex items-center w-1/3">
+            <a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10"></a>
+        </div>
+        <div class="flex items-center w-1/3">
+            <span class="text-black text-lg">Poste de Maroc</span>
+        </div>
+        <div class="flex justify-center w-1/3">
+            <span class="text-black text-lg">userName</span>
+        </div>
+        <div class="flex justify-end w-1/3">
+            <span class="text-black text-lg">status (admin, chef, agent)</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="text-center my-4">Gestion des Offices</h1>
+
+        <!-- Office Number Input Section -->
+        <div class="box mb-4">
+            <div class="form-group row justify-content-center">
+                <div class="col-md-6">
+                    <label for="officeNumber">N° Office:</label>
+                    <input type="number" id="officeNumber" class="form-control" placeholder="Enter office number" required>
+                </div>
+                <div class="col-md-2 mt-4">
+                    <button id="searchBtn" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Office Table Section -->
+        <div class="box">
+            <div id="officeTableSection" class="hidden">
+                <h2 class="text-center">Offices</h2>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>N° Office</th>
+                                <th>Nom Office</th>
+                                <th>Adresse</th>
+                                <th>Ville</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officeTableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-4">
+                    <button id="showAllBtn" class="btn btn-secondary">Show All Offices</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Office Section -->
+        <div class="box mt-4">
+            <h2 class="text-center">Ajouter un Office</h2>
+            <form id="addOfficeForm">
+                <div class="form-group">
+                    <label for="officeNumberAdd">N° Office:</label>
+                    <input type="number" id="officeNumberAdd" class="form-control" placeholder="Enter office number" required>
+                </div>
+                <div class="form-group">
+                    <label for="officeNameAdd">Nom Office:</label>
+                    <input type="text" id="officeNameAdd" class="form-control" placeholder="Enter office name" required>
+                </div>
+                <div class="form-group">
+                    <label for="officeAddressAdd">Adresse:</label>
+                    <input type="text" id="officeAddressAdd" class="form-control" placeholder="Enter address" required>
+                </div>
+                <div class="form-group">
+                    <label for="officeCityAdd">Ville:</label>
+                    <input type="text" id="officeCityAdd" class="form-control" placeholder="Enter city" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Ajouter Office</button>
+            </form>
+        </div>
+
+        <!-- Edit Office Modal -->
+        <div class="modal fade" id="editOfficeModal" tabindex="-1" aria-labelledby="editOfficeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editOfficeModalLabel">Modifier l'Office</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editOfficeForm">
+                            <input type="hidden" id="editIndex">
+                            <div class="form-group">
+                                <label for="editOfficeNumber">N° Office:</label>
+                                <input type="text" id="editOfficeNumber" class="form-control" placeholder="Enter office number" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="editOfficeName">Nom Office:</label>
+                                <input type="text" id="editOfficeName" class="form-control" placeholder="Enter office name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editOfficeAddress">Adresse:</label>
+                                <input type="text" id="editOfficeAddress" class="form-control" placeholder="Enter address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editOfficeCity">Ville:</label>
+                                <input type="text" id="editOfficeCity" class="form-control" placeholder="Enter city" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning w-100">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="successModalLabel">Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Enregistrement réussi!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="js/GestionOffice.js"></script>
+</body>
+</html>
