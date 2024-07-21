@@ -27,18 +27,6 @@ ProductFactory.create(
 if not SMS.objects.exists(): # the record must not exist
     SMSFactory.create()
 
-# admin user (just for testing)
-UserFactory.create(
-    email = 'admin@mail.com',
-    password = 'admin',
-    first_name = 'Admin',
-    last_name = 'Admin',
-    cin = '12345678',
-    role = 'admin',
-    status = 'actif',
-    office = OfficeFactory(name='Admin Office', address='Admin Address', city='Admin City')
-)
-
 # weight ranges (for testing)
 range_price = 10
 range_length = 500  # each range is 500g
@@ -62,7 +50,7 @@ admin = UserFactory.build(
     cin="99999999",
     role="admin",
     status="actif",
-    office = Office.objects.get(id=2)
+    office = OfficeFactory(name='Admin Office', address='Admin Address', city='Admin City')
 )
 admin.set_password("testtest")  # Hash the password
 admin.save()
