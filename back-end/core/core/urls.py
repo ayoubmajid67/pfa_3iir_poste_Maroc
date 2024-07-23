@@ -20,6 +20,11 @@ from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('custom_user.urls')),
-    path('api/', include('office.urls')),
+    path('api/', include([
+        path('', include('custom_user.urls')),
+        path('', include('office.urls')),
+        path('', include('product.urls')),
+        path('', include('weight_range.urls')),
+        path('', include('send_request.urls')),
+    ])),
 ]

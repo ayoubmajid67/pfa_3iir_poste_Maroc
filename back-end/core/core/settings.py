@@ -42,11 +42,13 @@ INSTALLED_APPS = [
     'django_use_email_as_username.apps.DjangoUseEmailAsUsernameConfig',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
     'custom_user.apps.CustomUserConfig',
     'office',
     'product',
     'send_request',
+    'weight_range',
 ]
 
 MIDDLEWARE = [
@@ -83,17 +85,22 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# CHANGE TO YOUR DB PASSWORD 
+DB_PASSWORDS = {
+    "MAJJID_PASSWORD": "majid077179_mysql",
+    "SIDEDINE_PASSWORD": ""
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'poste-maroc',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': DB_PASSWORDS["MAJJID_PASSWORD"],  
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -141,12 +148,18 @@ AUTH_USER_MODEL = 'custom_user.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'core.throttling.CustomAnonRateThrottle', # custom throttle class to limit number of login requests to 3 every 30 minutes (used in custom_user/views.py Login class)
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'custom_anon': '3/30m', # 3 requests every 30 minutes
+    }
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=12),
-    # "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=12),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,

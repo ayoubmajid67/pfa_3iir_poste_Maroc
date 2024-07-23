@@ -35,3 +35,9 @@ class UserWithOfficeSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'cin', 'first_name', 'last_name', 'email', 'role', 'status', 'office']
         extra_kwargs = {"password": {"write_only": True}}
+
+# a serializer for getting agent info (used in send_request/services.py to aggregate the sum of transactions amount per agent)
+class AgentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name']
