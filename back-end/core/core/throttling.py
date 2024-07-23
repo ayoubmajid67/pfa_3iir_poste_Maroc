@@ -12,8 +12,9 @@ class CustomAnonRateThrottle(SimpleRateThrottle):
         num_requests = int(num_requests)
 
         # Custom duration parsing
-        if duration == '30m':
-            duration_seconds = 30 * 60
+        # change duration to 1 minute for testing purposes : 
+        if duration == '1m':
+            duration_seconds = 1 * 60
         else:
             try:
                 duration_seconds = {

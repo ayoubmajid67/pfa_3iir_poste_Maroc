@@ -2,16 +2,13 @@
 // 	window.location = "/chatbot.html";
 // }
 
-
-
-
-
 const loginForm = document.querySelector("form");
 const email = document.querySelector('input[type="email"]');
 const password = document.querySelector('input[type="password"]');
 
 loginForm.addEventListener("submit", async function (event) {
 	event.preventDefault();
+	
 
 	const emailValue = email.value;
 	const passwordValue = password.value;
@@ -41,7 +38,7 @@ loginForm.addEventListener("submit", async function (event) {
 		localStorage.setItem("token", responseData.token);
 		localStorage.setItem("username", responseData.username);
 
-		window.location.href = "/chatbot.html";
+		// window.location.href = "/chatbot.html";
 	} catch (error) {
 		// pushError(error);
 	}
