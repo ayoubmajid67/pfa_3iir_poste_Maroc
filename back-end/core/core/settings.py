@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'poste-maroc',
         'USER': 'root',
-        'PASSWORD': DB_PASSWORDS["MAJJID_PASSWORD"],  
+        'PASSWORD': '',  
         'HOST': 'localhost',
         'PORT': '3306',
     }

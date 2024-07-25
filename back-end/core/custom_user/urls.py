@@ -12,4 +12,5 @@ urlpatterns = [
     path('staff/update/<int:id>/', UpdateStaff.as_view(), name='staff_update'),
     path('client/', ClientInfo.as_view(), name='client_info'),  # POST
     path('client/<int:id>/', ClientInfo.as_view(), name='client_update'),  # PATCH
+    path('user/', UserInfo.as_view(), name='client_update'),  # PATCH
 ]
