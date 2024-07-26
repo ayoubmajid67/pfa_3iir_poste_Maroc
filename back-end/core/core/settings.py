@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'poste-maroc',
         'USER': 'root',
-        'PASSWORD': DB_PASSWORDS["MAJJID_PASSWORD"],  
+        'PASSWORD': '',  
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -206,3 +206,4 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_ALL_ORIGINS = True

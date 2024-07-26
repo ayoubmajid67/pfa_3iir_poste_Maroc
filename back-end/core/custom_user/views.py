@@ -195,3 +195,12 @@ class Logout(APIView):
             return Response({"error": "Invalid token"}, status=400)
         except Exception as e:
             return Response({"error": str(e)}, status=400)
+        
+class UserInfo(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "user": UserWithOfficeSerializer(request.user).data},
+            status=200
+        )
