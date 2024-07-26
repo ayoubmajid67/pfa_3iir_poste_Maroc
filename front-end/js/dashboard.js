@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 //  start dashboardLogic :
-
 class SideBarClass {
 	constructor() {
 		this.sidebarDom = document.querySelector(".sidebar");
@@ -42,11 +41,10 @@ class SideBarClass {
 	}
 
 	#isSignOutBtn(button) {
-        console.log(button)
+        
 		return button.id == "signOut";
 	}
 	#AddSignOutBtnClickEvent(SignOutBtnDom) {
-        console.log(SignOutBtnDom);
 		SignOutBtnDom.addEventListener("click",()=>{
             clsUser.manageUserSignOut(); 
         })
