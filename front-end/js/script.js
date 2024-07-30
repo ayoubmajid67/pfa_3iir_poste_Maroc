@@ -63,21 +63,21 @@ class clsUtile {
 		scrollToTopSmooth(0);
 	}
 
-	static async  alertHint(msg, mode="success") {
+	static async alertHint(msg, mode = "success") {
 		const section = document.querySelector("section.hint ");
 		const divAlter = document.querySelector("section.hint > div");
 		const alterTitle = document.querySelector("section.hint .alert-title");
 		const alterContent = document.querySelector("section.hint .alert-content");
-	
+
 		divAlter.classList.add(`alert-${mode}`);
 		alterTitle.innerHTML = mode;
 		alterContent.innerText = msg;
-	
+
 		section.classList.add("ActiveAlter");
-	
+
 		await this.wait(100);
 		divAlter.id = "ActiveAlter";
-	
+
 		await this.wait(4000);
 		divAlter.id = "";
 		section.classList.remove("ActiveAlter");
@@ -86,11 +86,14 @@ class clsUtile {
 
 class clsLocalStorage {
 	static setUser(token, userInfo) {
-		localStorage.setItem("token", token);
+		localStorage.setItem("userToken", token);
+		localStorage.setItem("userInfo", JSON.stringify(userInfo));
+	}
+	static setUserInfo(userInfo) {
 		localStorage.setItem("userInfo", JSON.stringify(userInfo));
 	}
 	static getToken() {
-		return localStorage.getItem("token");
+		return localStorage.getItem("userToken");
 	}
 
 	static getUserInfo() {
@@ -98,21 +101,44 @@ class clsLocalStorage {
 		return userInfo ? JSON.parse(userInfo) : null;
 	}
 	static dropUserFromLocalStorage() {
-		localStorage.removeItem("token");
+		localStorage.removeItem("userToken");
 		localStorage.removeItem("userInfo");
+	}
+	static getRole() {
+		const userInfo = this.getUserInfo();
+		if (userInfo) return userInfo["role"].trim().toLowerCase();
+		else return null;
+	}
+	static getUsername() {
+		const userInfo = this.getUserInfo();
+		if (userInfo) return userInfo["first_name"].trim().toLowerCase();
+		else return null;
+	}
+	static getAccountStatus() {
+		const userInfo = this.getUserInfo();
+		if (userInfo) return userInfo["status"].trim().toLowerCase();
+		else return null;
 	}
 }
 
 // user class :
 class clsUser {
 	// Checks if the user is logged in based on the presence of a token and username in localStorage
+	static usersPages = {
+		manager: ["consultation"],
+		admin: ["consultation", "tarif", "gestion office", "gestion users"],
+		agent: ["envoyé", "consultation"],
+	};
+
+	static isAdmin() {
+		return clsLocalStorage.getRole() == "admin";
+	}
 	static isLogin() {
-		return Boolean(localStorage.getItem("token") && localStorage.getItem("userInfo"));
+		return Boolean(localStorage.getItem("userToken") && localStorage.getItem("userInfo"));
 	}
 
 	static async #loginApi(email, password) {
 		try {
-			console.log("the  url : ",`${baseUrl}login/`)
 			const response = await axios.post(`${baseUrl}login/`, {
 				email: email,
 				password: password,
@@ -123,27 +149,97 @@ class clsUser {
 		} catch (error) {
 			// Handle error and display message
 			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message=error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
 				throw { message, type: "warning" };
 			} else {
-				console.log(error);
+				// console.log(error);
 				throw { message: "An unexpected error occurred.", type: "danger" };
 			}
 		}
 	}
 
 	static async manageUserLogin(email, password) {
-		try{
+		try {
 			const data = await this.#loginApi(email, password);
-			clsLocalStorage.setUser(data.token, data.user);
+			clsLocalStorage.setUser(data.access, data.user);
 			clsPage.goToDashboardPage();
-
-		}catch(error){
+		} catch (error) {
 			clsUtile.alertHint(error.message, error.type);
 		}
-
 	}
-	static manageUserSignOut() {}
+	static async #signOutApi() {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.post(
+				`${baseUrl}logout/`,
+				{}, // empty body
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+	static async manageUserSignOut() {
+		try {
+			await this.#signOutApi();
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
+		clsLocalStorage.dropUserFromLocalStorage();
+		clsPage.goToLoginPage();
+	}
+	static async #getUserCriticalInfoApi() {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.get(`${baseUrl}user/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const data = response.data.user;
+
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+	static async manageGetCriticalUserInfo() {
+		try {
+			const userInfo = await this.#getUserCriticalInfoApi();
+			clsLocalStorage.setUserInfo(userInfo);
+		} catch (error) {
+			await clsUtile.alertHint(error.message, error.type);
+
+			await this.manageUserSignOut();
+		}
+	}
+	static isActiveUser() {
+		return clsLocalStorage.getAccountStatus() == "actif";
+	}
 }
 
 class clsPage {
@@ -166,29 +262,49 @@ class clsPage {
 	static isLoginPage() {
 		return this.isPage("index.html");
 	}
-	static #isAuthPage() {
+	static isAuthPage() {
 		//  all pages except login page  are consider auth pages  :
 		return !this.isPage("index.html");
 	}
 	static managePreventAccessAuthPage() {
-		if (this.#isAuthPage() && !clsUser.isLogin()) this.goToDashboardPage();
+		if (this.isAuthPage() && !clsUser.isLogin()) {
+			clsLocalStorage.dropUserFromLocalStorage();
+			this.goToLoginPage();
+		}
 	}
 	static managePreventAccessToLoginPage() {
 		// if the user is already login we should go to dashboard page :
 		if (clsUser.isLogin() && this.isLoginPage()) this.goToPage("dashboard.html");
 	}
+	static async managePreventAccessToBasicRolePage() {
+		if (this.isAuthPage()) await clsUser.manageGetCriticalUserInfo();
+	}
 }
 
-// Bind the method to ensure 'this' refers to clsPage when called
-window.addEventListener("load", () => {
+class clsHeader {
+	constructor() {
+		this.headerDom = document.querySelector(".navbar");
+
+		this.headerUsernameDom = this.headerDom.querySelector("#username");
+		this.headerStatusDom = this.headerDom.querySelector("#status");
+		this.siteLogo = this.headerDom.querySelector("#siteLogo");
+		this.#fillUserInfoToDom();
+		this.siteLogo.addEventListener("click", () => {
+			clsPage.goToDashboardPage();
+		});
+	}
+
+	#fillUserInfoToDom() {
+		this.headerUsernameDom.textContent = `username : ${clsLocalStorage.getUsername()}`;
+		this.headerStatusDom.textContent = `status : ${clsLocalStorage.getRole()}`;
+	}
+}
+let headerObject = "";
+window.addEventListener("load", async () => {
 	clsPage.managePreventAccessAuthPage();
 	clsPage.managePreventAccessToLoginPage();
+	await clsPage.managePreventAccessToBasicRolePage();
+	if (clsPage.isAuthPage()) {
+		headerObject = new clsHeader();
+	}
 });
-
-async function test() {
-
-	clsUser.manageUserLogin("admintest@mail.com","testtest")
-}
-
-test();
-

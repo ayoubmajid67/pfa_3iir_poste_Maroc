@@ -67,6 +67,14 @@ section.hint.ActiveAlter {
     z-index: 1000;
 }
 
+button:disabled,
+form input:disabled{
+     
+opacity: 0.5;
+cursor: not-allowed;
+user-select: none;
+}
+
 .alert {
     transform: translateX(110%);
     width: 90%;

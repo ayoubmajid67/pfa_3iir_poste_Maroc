@@ -69,6 +69,7 @@ form input[type="submit"]:hover {
     background-color: var(--secondaryColor);
 }
 
+
 /* Sign up link styling */
 form div {
     text-align: center;

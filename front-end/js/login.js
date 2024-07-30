@@ -6,45 +6,30 @@ const loginForm = document.querySelector("form");
 const email = document.querySelector('input[type="email"]');
 const password = document.querySelector('input[type="password"]');
 
-loginForm.addEventListener("submit", async function (event) {
-	event.preventDefault();
-	
+class clsLoginForm {
+	constructor() {
+		this.loginFormDom = document.querySelector("form");
+		this.emailInputDom = this.loginFormDom.querySelector(`input[type="email"]`);
+		this.passwordInputDom = this.loginFormDom.querySelector(`input[type="password"]`);
+		this.togglePasswordIcon = this.loginFormDom.querySelector(`#togglePassword`);
+		this.loginBtnDom = this.loginFormDom.querySelector(`input[type="submit"]`);
 
-	const emailValue = email.value;
-	const passwordValue = password.value;
-
-	const data = {
-		email: emailValue,
-		password: passwordValue,
-	};
-
-	try {
-		const response = await fetch(`${baseUrl}/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
+		this.togglePasswordIcon.addEventListener("click", () => {
+			this.#handelPasswordVisibilityIconToggle();
 		});
-
-		if (!response.ok) {
-			const errorData = await response.json();
-
-			// pushError(errorData.message);
-			return;
-		}
-
-		const responseData = await response.json();
-		localStorage.setItem("token", responseData.token);
-		localStorage.setItem("username", responseData.username);
-
-		// window.location.href = "/chatbot.html";
-	} catch (error) {
-		// pushError(error);
+		this.loginFormDom.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			this.loginBtnDom.disabled = true;
+			let [emailValue, passwordValue] = this.#getLoginInputsValue();
+			await clsUser.manageUserLogin(emailValue, passwordValue);
+			this.loginBtnDom.disabled = false;
+		});
 	}
-});
-
-const togglePassword = document.getElementById("togglePassword");
-togglePassword.addEventListener("click", function () {
-	handelVisibilityPassword(password, this);
-});
+	#getLoginInputsValue() {
+		return [this.emailInputDom.value, this.passwordInputDom.value];
+	}
+	#handelPasswordVisibilityIconToggle() {
+		clsUtile.handleVisibilityPassword(this.passwordInputDom, this.togglePasswordIcon);
+	}
+}
+const loginFormObject = new clsLoginForm();

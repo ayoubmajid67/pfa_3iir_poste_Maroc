@@ -156,12 +156,12 @@ REST_FRAMEWORK = {
         'core.throttling.CustomAnonRateThrottle', # custom throttle class to limit number of login requests to 3 every 30 minutes (used in custom_user/views.py Login class)
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'custom_anon': '3/30m', # 3 requests every 30 minutes
+        'custom_anon': '3/10m', # 3 requests every 30 minutes
     }
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=12),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
