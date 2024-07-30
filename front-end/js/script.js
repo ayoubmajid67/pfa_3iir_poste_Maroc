@@ -112,8 +112,8 @@ class clsUser {
 
 	static async #loginApi(email, password) {
 		try {
-			console.log("the  url : ",`${baseUrl}/login/`)
-			const response = await axios.post(`${baseUrl}/login`, {
+			console.log("the  url : ",`${baseUrl}login/`)
+			const response = await axios.post(`${baseUrl}login/`, {
 				email: email,
 				password: password,
 			});
@@ -122,8 +122,9 @@ class clsUser {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && error.response.data.error) {
-				throw { message: error.response.data.error, type: "warning" };
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
+				let message=error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				throw { message, type: "warning" };
 			} else {
 				console.log(error);
 				throw { message: "An unexpected error occurred.", type: "danger" };
@@ -186,7 +187,7 @@ window.addEventListener("load", () => {
 
 async function test() {
 
-	clsUser.manageUserLogin("Nice@gmail.com","nice12")
+	clsUser.manageUserLogin("admintest@mail.com","testtest")
 }
 
 test();
