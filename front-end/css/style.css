@@ -27,7 +27,7 @@ input, button {
     border: none;
     outline: none;
 }
-
+button:focus,
 input:focus {
     border: none;
     outline: none;
@@ -38,6 +38,7 @@ input:focus {
     --secondaryColor: #4f92d1;
     --thirdColor :#f9f9f9;
     --fourthColor:#030303;
+    
     
 }
 

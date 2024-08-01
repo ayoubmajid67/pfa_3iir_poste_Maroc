@@ -82,6 +82,16 @@ class clsUtile {
 		divAlter.id = "";
 		section.classList.remove("ActiveAlter");
 	}
+	static switchBtnHandler(btn, newClass, newText, newClickEventFunction,) {
+		if (btn) {
+			btn.classList = newClass;
+			btn.textContent = newText;
+			if (newClickEventFunction) btn.setAttribute("onclick", newClickEventFunction);
+	
+			
+		}
+	}
+	
 }
 
 class clsLocalStorage {
@@ -128,6 +138,13 @@ class clsUser {
 		manager: ["consultation"],
 		admin: ["consultation", "tarif", "gestion office", "gestion users"],
 		agent: ["envoyé", "consultation"],
+	};
+	static pagesName = {
+		envoyé: "envoi.html",
+		consultation: "consultation.html",
+		tarif: "Tarif.html",
+		"gestion office": "GestionOffice.html",
+		"gestion users": "GestionUsers.html",
 	};
 
 	static isAdmin() {
@@ -230,6 +247,9 @@ class clsUser {
 	static async manageGetCriticalUserInfo() {
 		try {
 			const userInfo = await this.#getUserCriticalInfoApi();
+
+			if (userInfo.role != clsLocalStorage.getRole()) throw { message: "Change User role request rauthentification", type: "warning" };
+
 			clsLocalStorage.setUserInfo(userInfo);
 		} catch (error) {
 			await clsUtile.alertHint(error.message, error.type);

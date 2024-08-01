@@ -40,7 +40,7 @@ class SideBarClass {
 
 	#getButtonHtmlStructure(pageName) {
 		return `
-		<button class="sidebar-button"><a href=${this.buttonsLInks[pageName]}>${pageName}</a></button>
+		<button class="sidebar-button"><a href='./${clsUser.pagesName[pageName]}'>${pageName}</a></button>
 		`;
 	}
 	#getSignOutBtnHtmlStructure(){

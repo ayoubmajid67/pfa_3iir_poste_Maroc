@@ -38,19 +38,107 @@ h2 {
 
 .table thead {
     border-radius: 10px 10px 0 0;
+    background: var(--primaryColor);
+    color: white;
+    font-weight: bold;
+}
+
+@media (max-width:1200px) {
+
+    .table {
+        font-size: 11px;
+        transform: scale(0.92);
+
+
+    }
+}
+
+@media (max-width:768px) {
+    .table {
+        font-size: 10px;
+        transform: scale(0.9);
+
+    }
+}
+
+@media (max-width:768px) {
+    .table {
+        font-size: 10px;
+        transform: scale(0.9);
+
+    }
+}
+
+@media (max-width:552px) {
+    .table {
+        font-size: 9px;
+        transform: scale(0.8) translateX(-15px);
+
+    }
+}
+
+.table #officeTableBody {
+    transition: 0.4s;
+
 }
 
 .table th, .table td {
     border-top: none;
     vertical-align: middle;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
 }
+
+.table tr .btnColumn .btnContainer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+
+}
+
+.table tbody tr.editStat {
+
+    border-left: 2px solid var(--primaryColor);
+    box-shadow: 1px 2px 20px rgba(166, 165, 165, 0.098);
+}
+
+tr .btnColumn button {
+    background-color: var(--secondaryColor);
+    padding: 12px 30px;
+    border-radius: 10px;
+    color: white;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+tr .editColumn button.cancel {
+    background-color: var(--primaryColor);
+}
+
+
+table th, td:not(:first-child) {
+    border-left: 1px solid;
+}
+
+table td input {
+    height: 100%;
+    padding: 8px 10px;
+}
+
+.table tbody tr:hover {
+    box-shadow: 1px 2px 20px rgba(0, 0, 0, 0.049);
+    background: white;
+}
+
 
 .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
     color: white;
     border-radius: 5px;
-    margin-top: 10px; /* Add top margin to the submit button */
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
 .btn-primary:hover {
@@ -63,7 +151,8 @@ h2 {
     border-color: #6c757d;
     color: white;
     border-radius: 5px;
-    margin-top: 10px; /* Add top margin to the submit button */
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
 .btn-secondary:hover {
@@ -76,7 +165,8 @@ h2 {
     border-color: #ed731d;
     color: white;
     border-radius: 5px;
-    margin: 5px; /* Add margin between buttons */
+    margin: 5px;
+    /* Add margin between buttons */
 }
 
 .btn-warning:hover, .btn-danger:hover {
