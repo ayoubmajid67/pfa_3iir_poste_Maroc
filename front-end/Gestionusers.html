@@ -54,6 +54,7 @@
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
+                                <th>Password</th>
                                 <th>Role</th>
                                 <th>Office</th>
                                 <th>Action</th>
@@ -89,6 +90,10 @@
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input type="email" id="email" class="form-control" placeholder="Enter email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
                 </div>
                 <div class="form-group">
                     <label for="role">Role:</label>
@@ -133,6 +138,10 @@
                                 <input type="email" id="editEmail" class="form-control" placeholder="Enter email" required>
                             </div>
                             <div class="form-group">
+                                <label for="editPassword">Password:</label>
+                                <input type="password" id="editPassword" class="form-control" placeholder="Enter password" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="editRole">Role:</label>
                                 <select id="editRole" class="form-control" required>
                                     <option value="Chef Agence">Chef Agence</option>
@@ -172,8 +181,8 @@
         </div>
     </section>
 
-    		<!-- axios library -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- axios library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="js/script.js"></script>
     <script src="js/Gestionusers.js"></script>
 </body>
