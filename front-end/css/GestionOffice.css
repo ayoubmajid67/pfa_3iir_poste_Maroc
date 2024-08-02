@@ -9,7 +9,26 @@ body {
     padding: 20px;
     margin-top: 80px;
 }
+.mainContent{
+    display: flex;
+    flex-direction: column;
+align-items: center;
 
+}
+
+.box {
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    width: 85%;
+}
+@media (max-width :768px){
+    .box{
+        width: 95%;
+    }
+}
 .box {
     background: #fff;
     padding: 20px;
@@ -214,4 +233,18 @@ input:focus, select:focus, textarea:focus, button:focus {
 
 .hidden {
     display: none;
+}
+#addOfficeForm{
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+#addOfficeForm input{
+    padding: 25px 10px;
+}
+#addOfficeForm  button{
+    padding: 10px;
+    font-weight: bold;
 }

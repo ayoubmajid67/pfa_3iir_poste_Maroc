@@ -1,120 +1,492 @@
+class clsTable {
+	static toggleUserBtnContent = ["Show All  users", "Hide All users"];
+	constructor() {
+		this.tableContainerContentDom = document.getElementById("userTableBody");
+		this.toggleUsersShowBtnDom = document.getElementById("toggleshowUsersBtn");
+		this.usersFilterInput = document.getElementById("userNumber");
 
+		this.userColumnsPrevValues = {
+			cin: "",
+			firstName: "",
+			lastName: "",
+			email: "",
+			role: "",
+			office: "",
 
-//  [nice] but  we'll use oop rather than functional programming 
-//------------------------------------------------------------
-/*
-document.addEventListener('DOMContentLoaded', function() {
-    const searchBtn = document.getElementById('searchBtn');
-    const userTableSection = document.getElementById('userTableSection');
-    const userTableBody = document.getElementById('userTableBody');
-    const addUserForm = document.getElementById('addUserForm');
-    const editUserForm = document.getElementById('editUserForm');
-    let userData = [
-        { cin: '1234', firstName: 'John', lastName: 'Doe', email: 'john.doe@example.com', password: 'password123', role: 'Chef Agence', office: '1' },
-        { cin: '5678', firstName: 'Jane', lastName: 'Doe', email: 'jane.doe@example.com', password: 'password456', role: 'Agent', office: '1' }
-    ];  // Initial example users
-    let deletedUsers = []; // Track deleted users
+			status: "",
+		};
+		this.userChangeInputsInfo = {
+			cin: false,
+			firstName: false,
+			lastName: false,
+			email: false,
+			role: false,
+			office: false,
 
-    searchBtn.addEventListener('click', function() {
-        const officeNumber = document.getElementById('officeNumber').value;
+			status: false,
+		};
 
-        if (officeNumber) {
-            // Clear previous data
-            userTableBody.innerHTML = '';
+		this.toggleUsersShowBtnDom.addEventListener("click", () => {
+			this.#toggleOfficeShow();
+		});
 
-            // Populate table with data
-            userData.filter(user => user.office === officeNumber && !deletedUsers.includes(user.cin))
-                .forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.cin}</td>
-                        <td>${item.firstName}</td>
-                        <td>${item.lastName}</td>
-                        <td>${item.email}</td>
-                        <td>${item.password}</td>
-                        <td>${item.role}</td>
-                        <td>${item.office}</td>
-                        <td>
-                            <button class="btn btn-warning" onclick="showEditUserModal(${index})">Modifier</button>
-                            <button class="btn btn-danger" onclick="deleteUser(${index}, this)">Supprimer</button>
-                        </td>
-                    `;
-                    userTableBody.appendChild(row);
-                });
+		this.manageGetUsers();
+	}
 
-            // Show user table section
-            userTableSection.classList.remove('hidden');
-        } else {
-            alert('Please enter an office number.');
-        }
-    });
+	#toggleOfficeShow() {
+		const isHidden = Number(this.tableContainerContentDom.classList.contains("hidden"));
+		this.toggleUsersShowBtnDom.textContent = clsTable.toggleUserBtnContent[isHidden];
+		this.tableContainerContentDom.classList.toggle("hidden");
+	}
 
-    addUserForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+	async #getUsersApi() {
+		let accessToken = clsLocalStorage.getToken();
 
-        const newUser = {
-            cin: document.getElementById('cin').value,
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            email: document.getElementById('email').value,
-            password: document.getElementById('password').value,
-            role: document.getElementById('role').value,
-            office: document.getElementById('office').value
-        };
+		try {
+			const response = await axios.get(`${baseUrl}staff/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
 
-        userData.push(newUser);
+			const data = response.data;
 
-        // Reset the form
-        addUserForm.reset();
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+	static getUserHtmlStructure(user) {
+		return `
+   	<tr userId=${user.id}  userCin=${user.cin} class="userCard">
+									<td class="cin">${user.cin}</td>
+									<td class="nom">${user.first_name}</td>
+									<td class="pernom">${user.last_name}</td>
+									<td class="email">${user.email}</td>
+									<td class="role">${user.role}</td>
+									<td class="office">${user.office.id}</td>
+								
+									<td class="status">${user.status}</td>
+									<td class="btnColumn editColumn">
+										<div class="btnContainer">
+											<button onclick="tableObject.editUserCard(event)" class="edit">edit</button>
+										</div>
+									</td>
+									<td class="btnColumn saveColumn">
+										<div class="btnContainer">
+											<button disabled onclick="tableObject.saveUserCard(event)">Save</button>
+										</div>
+									</td>
+								</tr>
+     `;
+	}
 
-        // Show success message
-        $('#successModal').modal('show');
-    });
+	async manageGetUsers() {
+		try {
+			const users = await this.#getUsersApi();
+			this.tableContainerContentDom.innerHTML = "";
 
-    window.showEditUserModal = function(index) {
-        const user = userData[index];
-        document.getElementById('editIndex').value = index;
-        document.getElementById('editCin').value = user.cin;
-        document.getElementById('editFirstName').value = user.firstName;
-        document.getElementById('editLastName').value = user.lastName;
-        document.getElementById('editEmail').value = user.email;
-        document.getElementById('editPassword').value = user.password;
-        document.getElementById('editRole').value = user.role;
-        document.getElementById('editOffice').value = user.office;
+			users.forEach((user) => {
+				const userHtmlStructure = clsTable.getUserHtmlStructure(user);
+				this.tableContainerContentDom.insertAdjacentHTML("beforeend", userHtmlStructure);
+			});
+		} catch (error) {
+			await clsUtile.alertHint(error.message, error.type);
+		}
+	}
+	#convertEditedCardColumnsToEditMode(userColumns) {
+		userColumns.cinDom.innerHTML = `<input type="text" class="targetCin" value='${this.userColumnsPrevValues.cin}' />`;
+		userColumns.firstNameDom.innerHTML = `<input type="text" class="targetFirstName" value='${this.userColumnsPrevValues.firstName}' />`;
+		userColumns.lastNameDom.innerHTML = `<input type="text" class="targetLastName" value='${this.userColumnsPrevValues.lastName}' />`;
+		userColumns.emailDom.innerHTML = `<input type="text" class="targetEmail" value='${this.userColumnsPrevValues.email}' />`;
+		userColumns.roleDom.innerHTML = `
+		<select class="targetRole">
+    <option value="admin" ${this.userColumnsPrevValues.role == "admin" ? "selected" : ""} >admin</option>
+    <option value="manager"  ${this.userColumnsPrevValues.role == "manager" ? "selected" : ""}>manager</option>
+    <option value="agent"  ${this.userColumnsPrevValues.role == "agent" ? "selected" : ""}>agent</option>
+   >
+</select>
+		`;
+		userColumns.officeDom.innerHTML = `<input type="text" class="targetOffice" value='${this.userColumnsPrevValues.office}' />`;
+		userColumns.statusDom.innerHTML = `
+		<select class="targetStatus">
+    <option value="actif" ${this.userColumnsPrevValues.status == "actif" ? "selected" : ""} >actif</option>
+    <option value="démissionné"  ${this.userColumnsPrevValues.status == "démissionné" ? "selected" : ""}>démissionné</option>
+    <option value="décédé"  ${this.userColumnsPrevValues.status == "décédé" ? "selected" : ""}>décédé</option>
+	<option value="retraite"  ${this.userColumnsPrevValues.status == "retraite" ? "selected" : ""}>retraite</option>
+   >
+</select>
+		`;
 
-        $('#editUserModal').modal('show');
-    };
+		userColumns.cinDom.querySelector("input").focus();
+	}
+	#setUserPreviousValues(userColumns) {
+		this.userColumnsPrevValues.cin = userColumns.cinDom.textContent;
+		this.userColumnsPrevValues.firstName = userColumns.firstNameDom.textContent;
+		this.userColumnsPrevValues.lastName = userColumns.lastNameDom.textContent;
+		this.userColumnsPrevValues.email = userColumns.emailDom.textContent;
+		this.userColumnsPrevValues.role = userColumns.roleDom.textContent;
+		this.userColumnsPrevValues.office = userColumns.officeDom.textContent;
+		this.userColumnsPrevValues.status = userColumns.statusDom.textContent;
+	}
+	#checkIsAllowToActivateSaveBtn(saveBtn) {
+		if (this.userChangeInputsInfo.cin || this.userChangeInputsInfo.firstName || this.userChangeInputsInfo.lastName || this.userChangeInputsInfo.email || this.userChangeInputsInfo.role || this.userChangeInputsInfo.office || this.userChangeInputsInfo.status) {
+			saveBtn.disabled = false;
+			return true;
+		} else {
+			saveBtn.disabled = true;
+			return false;
+		}
+	}
 
-    editUserForm.addEventListener('submit', function(event) {
-        event.preventDefault();
+	#editUserInputTrack(input, officeOptionName) {
+		const value = input.value.trim();
+		if (value && value != this.userColumnsPrevValues[officeOptionName]) this.userChangeInputsInfo[officeOptionName] = true;
+		else this.userChangeInputsInfo[officeOptionName] = false;
+	}
+	#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn) {
+		userColumns.cinDom.addEventListener("input", (event) => {
+			this.#editUserInputTrack(event.target, "cin");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.firstNameDom.addEventListener("input", (event) => {
+			this.#editUserInputTrack(event.target, "firstName");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.lastNameDom.addEventListener("input", (event) => {
+			this.#editUserInputTrack(event.target, "lastName");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.emailDom.addEventListener("input", (event) => {
+			this.#editUserInputTrack(event.target, "email");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.roleDom.addEventListener("change", (event) => {
+			this.#editUserInputTrack(event.target, "role");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.officeDom.addEventListener("input", (event) => {
+			this.#editUserInputTrack(event.target, "office");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.statusDom.addEventListener("change", (event) => {
+			this.#editUserInputTrack(event.target, "status");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+	}
 
-        const index = document.getElementById('editIndex').value;
-        userData[index].firstName = document.getElementById('editFirstName').value;
-        userData[index].lastName = document.getElementById('editLastName').value;
-        userData[index].email = document.getElementById('editEmail').value;
-        userData[index].password = document.getElementById('editPassword').value;
-        userData[index].role = document.getElementById('editRole').value;
-        userData[index].office = document.getElementById('editOffice').value;
+	#cancelEditPrevUserCards() {
+		const editStatCards = this.tableContainerContentDom.querySelectorAll(".editStat");
+		editStatCards.forEach((officeCard) => {
+			const cancelBtn = officeCard.querySelector("button.cancel");
+			cancelBtn.click();
+		});
+	}
 
-        $('#editUserModal').modal('hide');
+	editUserCard(event) {
+		this.#cancelEditPrevUserCards();
 
-        // Show success message
-        $('#successModal').modal('show');
-    });
+		const editBtn = event.target;
 
-    window.deleteUser = function(index, button) {
-        // Track the deleted user by CIN
-        deletedUsers.push(userData[index].cin);
+		clsUtile.switchBtnHandler(editBtn, "cancel", "cancel", "tableObject.cancelEditOfficeCard(event)");
+		const targetOfficeCard = editBtn.closest(".userCard");
+		targetOfficeCard.classList.add("editStat");
+		const saveBtn = targetOfficeCard.querySelector(".saveColumn button");
+		let userColumns = {
+			cinDom: targetOfficeCard.querySelector(".cin"),
+			firstNameDom: targetOfficeCard.querySelector(".nom"),
+			lastNameDom: targetOfficeCard.querySelector(".pernom"),
+			emailDom: targetOfficeCard.querySelector(".email"),
+			roleDom: targetOfficeCard.querySelector(".role"),
+			officeDom: targetOfficeCard.querySelector(".office"),
+			statusDom: targetOfficeCard.querySelector(".status"),
+		};
 
-        // Remove the specific user from the data array
-        userData.splice(index, 1);
+		this.#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn);
+		this.#setUserPreviousValues(userColumns);
+		this.#convertEditedCardColumnsToEditMode(userColumns);
+	}
+	#convertEditedCardColumnsToNormalMode(userColumns) {
+		userColumns.cinDom.innerHTML = this.userColumnsPrevValues.cin;
+		userColumns.firstNameDom.innerHTML = this.userColumnsPrevValues.firstName;
+		userColumns.lastNameDom.innerHTML = this.userColumnsPrevValues.lastName;
+		userColumns.emailDom.innerHTML = this.userColumnsPrevValues.email;
+		userColumns.roleDom.innerHTML = this.userColumnsPrevValues.role;
+		userColumns.officeDom.innerHTML = this.userColumnsPrevValues.office;
+		userColumns.statusDom.innerHTML = this.userColumnsPrevValues.status;
+	}
+	#convertSaveCardColumnsToNormalMode(userColumns, data) {
+		userColumns.cinDom.innerHTML = data.cin;
+		userColumns.firstNameDom.innerHTML = data.firstName;
+		userColumns.lastNameDom.innerHTML = data.lastName;
+		userColumns.emailDom.innerHTML = data.email;
+		userColumns.roleDom.innerHTML = data.role;
+		userColumns.officeDom.innerHTML = data.office;
+		userColumns.statusDom.innerHTML = data.status;
+	}
+	#clearUserPreviousAndChangeValues() {
+		this.userColumnsPrevValues.cin = "";
+		this.userColumnsPrevValues.lastName = "";
+		this.userColumnsPrevValues.email = "";
+		this.userColumnsPrevValues.role = "";
+		this.userColumnsPrevValues.office = "";
+		this.userColumnsPrevValues.status = "";
 
-        // Remove the row from the table
-        const row = button.parentElement.parentElement;
-        row.parentNode.removeChild(row);
+		this.userChangeInputsInfo.cin = false;
+		this.userChangeInputsInfo.lastName = false;
+		this.userChangeInputsInfo.email = false;
+		this.userChangeInputsInfo.role = false;
+		this.userChangeInputsInfo.office = false;
+		this.userChangeInputsInfo.status = false;
+	}
+	cancelEditOfficeCard(event) {
+		const cancelBtn = event.target;
+		clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editUserCard(event)");
+		const targetOfficeCard = cancelBtn.closest(".userCard");
+		targetOfficeCard.classList.remove("editStat");
+		const saveBtn = targetOfficeCard.querySelector(".saveColumn button");
+		saveBtn.disabled = true;
 
-        // Show success message
-        $('#successModal').modal('show');
-    };
+		let userColumns = {
+			cinDom: targetOfficeCard.querySelector(".cin"),
+			firstNameDom: targetOfficeCard.querySelector(".nom"),
+			lastNameDom: targetOfficeCard.querySelector(".pernom"),
+			emailDom: targetOfficeCard.querySelector(".email"),
+			roleDom: targetOfficeCard.querySelector(".role"),
+			officeDom: targetOfficeCard.querySelector(".office"),
+			statusDom: targetOfficeCard.querySelector(".status"),
+		};
+		this.#convertEditedCardColumnsToNormalMode(userColumns);
+		this.#clearUserPreviousAndChangeValues();
+	}
+	async #updateUserCardApi(userId, updatedData) {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.patch(`${baseUrl}staff/update/${userId}/`, updatedData, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const data = response.data;
+
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+
+	#getUpdatedData(userColumns) {
+		let updatedData = {};
+		if (this.userChangeInputsInfo.cin) updatedData.cin = userColumns.cinDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.firstName) updatedData.firstName = userColumns.firstNameDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.lastName) updatedData.lastNameDom = userColumns.lastNameDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.email) updatedData.email = userColumns.emailDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.role) updatedData.role = userColumns.roleDom.querySelector("select").value;
+		if (this.userChangeInputsInfo.office) updatedData.office = userColumns.officeDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.status) updatedData.status = userColumns.statusDom.querySelector("select").value;
+
+		return updatedData;
+	}
+	async saveUserCard(event) {
+		const saveBtn = event.target;
+
+		if (!this.#checkIsAllowToActivateSaveBtn(saveBtn)) return;
+
+		const targetUserCard = saveBtn.closest(".userCard");
+		const userId = targetUserCard.getAttribute("userId");
+
+		let userColumns = {
+			cinDom: targetUserCard.querySelector(".cin"),
+			firstNameDom: targetUserCard.querySelector(".nom"),
+			lastNameDom: targetUserCard.querySelector(".pernom"),
+			emailDom: targetUserCard.querySelector(".email"),
+			roleDom: targetUserCard.querySelector(".role"),
+			officeDom: targetUserCard.querySelector(".office"),
+			statusDom: targetUserCard.querySelector(".status"),
+		};
+		let updatedData = this.#getUpdatedData(userColumns);
+
+		try {
+			let userData = await this.#updateUserCardApi(userId, updatedData);
+
+			const cancelBtn = targetUserCard.querySelector("button.cancel");
+			clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editUserCard(event)");
+			targetUserCard.classList.remove("editStat");
+
+			this.#convertSaveCardColumnsToNormalMode(userColumns, userData);
+			this.#clearUserPreviousAndChangeValues();
+			clsUtile.alertHint("user updated with success", "success");
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
+	}
+}
+
+class filter {
+	constructor(usersContainer) {
+		this.filterInputDom = document.getElementById("userNumber");
+		this.filterInputDom.addEventListener("input", () => {
+			if (this.filterInputDom.value == "") {
+				this.#showAllUsersBox();
+			}
+		});
+		this.filterInputDom.addEventListener("keypress", (event) => {
+			if (event.key == "Enter") this.searchBtnDom.click();
+		});
+		this.searchBtnDom = document.getElementById("searchBtn");
+		this.usersContainerDom = usersContainer;
+		this.searchBtnDom.addEventListener("click", () => {
+			this.searchBtnDom.disabled = true;
+			this.#filterUsersContainer();
+			this.searchBtnDom.disabled = false;
+		});
+	}
+
+	#showAllUsersBox() {
+		this.usersContainerDom.querySelectorAll(".userCard").forEach((userBox) => {
+			userBox.style.display = "table-row";
+		});
+	}
+	#filterUsersContainer() {
+		let numCinUser = this.filterInputDom.value.trim();
+		if (numCinUser) {
+			this.usersContainerDom.querySelectorAll(".userCard").forEach((userBox) => {
+				if (userBox.getAttribute("userCin") == numCinUser) userBox.style.display = "table-row";
+				else userBox.style.display = "none";
+			});
+		}
+	}
+}
+
+class clsAddOfficeForm {
+	#userValues = {
+		cin: "",
+		first_name: "",
+		last_name: "",
+		email: "",
+		password: "",
+		role: "",
+		office: "",
+	};
+	constructor(usersContainer) {
+		this.addUserFormDom = document.getElementById("addUserForm");
+		this.cinInputDom = document.getElementById("addUserCin");
+		this.firstNameInputDom = document.getElementById("addUserFirstName");
+		this.lastNameInputDom = document.getElementById("addUserLastName");
+		this.emailInputDom = document.getElementById("addUserEmail");
+		this.passwordInputDom = document.getElementById("addUserPassword");
+		this.roleInputDom = document.getElementById("addUserRole");
+		this.officeInputDom = document.getElementById("addUserOffice");
+		this.statusInputDom = document.getElementById("addUserStatus");
+		this.submitBtnDom = document.getElementById("submitAddUserBtn");
+		this.togglePasswordIcon = this.addUserFormDom.querySelector(`#togglePassword`);
+
+		this.usersContainerDom = usersContainer;
+
+		this.togglePasswordIcon.addEventListener("click", () => {
+			this.#handelPasswordVisibilityIconToggle();
+		});
+
+		this.addUserFormDom.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			this.submitBtnDom.disabled = true;
+
+			await this.manageAddNewUser();
+			this.submitBtnDom.disabled = false;
+		});
+	}
+	#handelPasswordVisibilityIconToggle() {
+		clsUtile.handleVisibilityPassword(this.passwordInputDom, this.togglePasswordIcon);
+	}
+	#fillAddUserFormValues() {
+		this.#userValues.cin = this.cinInputDom.value;
+		this.#userValues.first_name = this.firstNameInputDom.value;
+		this.#userValues.last_name = this.lastNameInputDom.value;
+		this.#userValues.email = this.emailInputDom.value;
+		this.#userValues.password = this.passwordInputDom.value;
+		this.#userValues.role = this.roleInputDom.value;
+		this.#userValues.office = this.officeInputDom.value;
+		this.#userValues.status = this.statusInputDom.value;
+	}
+	#clearAddUserInputs() {
+		this.addUserFormDom.value = "";
+		this.cinInputDom.value = "";
+		this.firstNameInputDom.value = "";
+		this.lastNameInputDom.value = "";
+		this.emailInputDom.value = "";
+		this.passwordInputDom.value = "";
+		this.roleInputDom.value = "";
+		this.officeInputDom.value = "";
+		this.statusInputDom.value = "";
+	}
+
+	async #addNewUserApi() {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.post(
+				`${baseUrl}register/`,
+
+				this.#userValues,
+
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+
+	async manageAddNewUser() {
+		this.#fillAddUserFormValues();
+
+		try {
+			let data = await this.#addNewUserApi();
+			let user = data.user;
+			const officeHtmlStructure = clsTable.getUserHtmlStructure(user);
+			this.usersContainerDom.insertAdjacentHTML("beforeend", officeHtmlStructure);
+
+			this.#clearAddUserInputs();
+			clsUtile.alertHint(data.message, "success");
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
+	}
+}
+
+// main : --------------------------------------
+let tableObject = "";
+window.addEventListener("load", () => {
+	tableObject = new clsTable();
+	const filterObject = new filter(tableObject.tableContainerContentDom);
+	const addUserObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
 });
-*/

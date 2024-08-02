@@ -28,12 +28,17 @@ class SideBarClass {
 			"gestion users": "./GestionUsers.html",
 		};
 
+		
 	 if(clsUser.isActiveUser()){
 		this.#addSidebarButtons(); 
 		this.#AddClickButtonsEvent();
 	 }
 	 else{
 		this.sidebarDom.innerHTML='<h2>Contact your admin to enable your Account</h2>'
+		const signOutOutButtonHtmlStructure=this.#getSignOutBtnHtmlStructure(); 
+         this.sidebarDom.insertAdjacentHTML("beforeend",signOutOutButtonHtmlStructure);
+		 const signOutBtn=  this.sidebarDom.querySelector("#signOut"); 
+		 this.#AddSignOutBtnClickEvent(signOutBtn);
 	 }
 		
 	}
@@ -85,4 +90,10 @@ class SideBarClass {
 	}
 }
 
-const sidebarObject = new SideBarClass();
+// main : --------------------------------------
+window.addEventListener("load", ()=>{
+
+	const sidebarObject = new SideBarClass();
+})
+
+

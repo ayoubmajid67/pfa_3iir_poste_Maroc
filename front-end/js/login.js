@@ -32,4 +32,8 @@ class clsLoginForm {
 		clsUtile.handleVisibilityPassword(this.passwordInputDom, this.togglePasswordIcon);
 	}
 }
-const loginFormObject = new clsLoginForm();
+// main : --------------------------------------
+window.addEventListener('load',()=>{
+	const loginFormObject = new clsLoginForm();
+})
+

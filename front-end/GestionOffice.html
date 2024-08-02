@@ -26,7 +26,7 @@
 			</div>
 		</div>
 
-		<div class="container">
+		<div class="mainContent">
 			<h1 class="text-center my-4">Gestion des Offices</h1>
 
 			<!-- Office Number Input Section -->
@@ -66,7 +66,15 @@
 									<td class="adresse">amin</td>
 									<td class="ville">amin</td>
 
-									<td class="editColumn"><button>edit</button></td>
+									<td class="btnColumn editColumn">
+										<div class="btnContainer">
+									  <button onclick='tableObject.editOfficeCard(event)' class="edit">edit</button>
+									  </div>
+									  </td>
+									  <td class="btnColumn saveColumn">
+									  <div class="btnContainer">
+										 <button disabled onclick='tableObject.saveOfficeCard(event)'>Save</button>
+									  </div>
 								</tr>
 
                              
@@ -83,10 +91,7 @@
 			<div class="box mt-4">
 				<h2 class="text-center">Ajouter un Office</h2>
 				<form id="addOfficeForm">
-					<div class="form-group">
-						<label for="officeNumberAdd">N° Office:</label>
-						<input type="number" id="officeNumberAdd" class="form-control" placeholder="Enter office number" required />
-					</div>
+					
 					<div class="form-group">
 						<label for="officeNameAdd">Nom Office:</label>
 						<input type="text" id="officeNameAdd" class="form-control" placeholder="Enter office name" required />
@@ -103,54 +108,9 @@
 				</form>
 			</div>
 
-			<!-- Edit Office Modal -->
-			<div class="modal fade" id="editOfficeModal" tabindex="-1" aria-labelledby="editOfficeModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="editOfficeModalLabel">Modifier l'Office</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<form id="editOfficeForm">
-								<input type="hidden" id="editIndex" />
-								<div class="form-group">
-									<label for="editOfficeNumber">N° Office:</label>
-									<input type="text" id="editOfficeNumber" class="form-control" placeholder="Enter office number" disabled />
-								</div>
-								<div class="form-group">
-									<label for="editOfficeName">Nom Office:</label>
-									<input type="text" id="editOfficeName" class="form-control" placeholder="Enter office name" required />
-								</div>
-								<div class="form-group">
-									<label for="editOfficeAddress">Adresse:</label>
-									<input type="text" id="editOfficeAddress" class="form-control" placeholder="Enter address" required />
-								</div>
-								<div class="form-group">
-									<label for="editOfficeCity">Ville:</label>
-									<input type="text" id="editOfficeCity" class="form-control" placeholder="Enter city" required />
-								</div>
-								<button type="submit" class="btn btn-warning w-100">Save Changes</button>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
+	
 
-			<!-- Success Message Modal -->
-			<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="successModalLabel">Success</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<p>Enregistrement réussi!</p>
-						</div>
-					</div>
-				</div>
-			</div>
+		
 		</div>
 		<section class="hint">
 			<div class="alert alert-primary">

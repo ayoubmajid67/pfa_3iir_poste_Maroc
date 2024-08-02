@@ -82,16 +82,13 @@ class clsUtile {
 		divAlter.id = "";
 		section.classList.remove("ActiveAlter");
 	}
-	static switchBtnHandler(btn, newClass, newText, newClickEventFunction,) {
+	static switchBtnHandler(btn, newClass, newText, newClickEventFunction) {
 		if (btn) {
 			btn.classList = newClass;
 			btn.textContent = newText;
 			if (newClickEventFunction) btn.setAttribute("onclick", newClickEventFunction);
-	
-			
 		}
 	}
-	
 }
 
 class clsLocalStorage {
@@ -136,14 +133,14 @@ class clsUser {
 	// Checks if the user is logged in based on the presence of a token and username in localStorage
 	static usersPages = {
 		manager: ["consultation"],
-		admin: ["consultation", "tarif", "gestion office", "gestion users"],
+		admin: ["consultation", "tarif", "gestion offices", "gestion users"],
 		agent: ["envoyé", "consultation"],
 	};
 	static pagesName = {
 		envoyé: "envoi.html",
 		consultation: "consultation.html",
 		tarif: "Tarif.html",
-		"gestion office": "GestionOffice.html",
+		"gestion offices": "GestionOffice.html",
 		"gestion users": "GestionUsers.html",
 	};
 
@@ -165,8 +162,8 @@ class clsUser {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);
@@ -202,8 +199,8 @@ class clsUser {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);
@@ -235,8 +232,8 @@ class clsUser {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);
@@ -297,7 +294,13 @@ class clsPage {
 		if (clsUser.isLogin() && this.isLoginPage()) this.goToPage("dashboard.html");
 	}
 	static async managePreventAccessToBasicRolePage() {
-		if (this.isAuthPage()) await clsUser.manageGetCriticalUserInfo();
+		if (this.isAuthPage()) {
+			await clsUser.manageGetCriticalUserInfo();
+			if (!clsUser.isActiveUser()) {
+				await clsUtile.alertHint("Contact Your admin to activate your Account", "warning");
+				clsPage.goToDashboardPage();
+			}
+		}
 	}
 }
 
@@ -319,6 +322,7 @@ class clsHeader {
 		this.headerStatusDom.textContent = `status : ${clsLocalStorage.getRole()}`;
 	}
 }
+// main : --------------------------------------
 let headerObject = "";
 window.addEventListener("load", async () => {
 	clsPage.managePreventAccessAuthPage();

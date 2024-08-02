@@ -9,6 +9,12 @@ body {
     padding: 20px;
     margin-top: 80px;
 }
+.mainContent{
+    display: flex;
+    flex-direction: column;
+align-items: center;
+
+}
 
 .box {
     background: #fff;
@@ -16,6 +22,12 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 15px;
     margin-bottom: 20px;
+    width: 90%;
+}
+@media (max-width :768px){
+    .box{
+        width: 95%;
+    }
 }
 
 h1, h2 {
@@ -34,15 +46,134 @@ h2 {
 
 .table {
     border-radius: 10px;
+    font-size: 12px;
 }
 
 .table thead {
     border-radius: 10px 10px 0 0;
+    background: var(--primaryColor);
+    color: white;
+    font-weight: bold;
+}
+
+.table thead {
+    border-radius: 10px 10px 0 0;
+    background: var(--primaryColor);
+    color: white;
+    font-weight: bold;
+}
+
+/* dakchi dyale 9di ou sf */
+@media (max-width:1450px) {
+
+    .table {
+        font-size: 11px;
+        transform: scale(0.84);
+
+
+    }
+}
+@media (max-width:992px) {
+    .table {
+        font-size: 9px;
+        transform: scale(0.74) translateX(-15px);
+
+    }
+}
+
+
+@media (max-width:768px) {
+    .table {
+        font-size: 8px;
+        transform: scale(0.70) translateX(-100px);
+
+    }
+}
+
+
+
+@media (max-width:552px) {
+    .table {
+        font-size: 7px;
+        transform: scale(0.6) translateX(-150px);
+
+    }
+}
+
+.table #officeTableBody {
+    transition: 0.4s;
+
 }
 
 .table th, .table td {
     border-top: none;
     vertical-align: middle;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+}
+
+.table tr .btnColumn .btnContainer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+
+}
+
+.table tbody tr.editStat {
+
+    border-left: 2px solid var(--primaryColor);
+    box-shadow: 1px 2px 20px rgba(166, 165, 165, 0.098);
+}
+
+tr .btnColumn button {
+    background-color: var(--secondaryColor);
+    padding: 12px 30px;
+    border-radius: 10px;
+    color: white;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+tr .editColumn button.cancel {
+    background-color: var(--primaryColor);
+}
+
+
+table th, td:not(:first-child) {
+    border-left: 1px solid;
+}
+
+table td input {
+    height: 100%;
+    padding: 8px 0px;
+}
+
+.table tbody tr:hover {
+    box-shadow: 1px 2px 20px rgba(0, 0, 0, 0.049);
+    background: white;
+}
+
+.table th, .table td {
+    border-top: none;
+    vertical-align: middle;
+}
+
+.passwordContainer {
+    position: relative;
+
+}
+
+.passwordContainer .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    color: var(--primaryColor);
+    padding: 14px;
+
 }
 
 .btn-primary {

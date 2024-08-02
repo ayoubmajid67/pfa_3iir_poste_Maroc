@@ -1,6 +1,6 @@
 //  [nice] but  we'll use oop rather than functional programming
 //------------------------------------------------------------
-/*
+
 document.addEventListener('DOMContentLoaded', function() {
     const submitTarifBtn = document.getElementById('submitTarifBtn');
     const tarifAnalyticsSection = document.getElementById('tarifAnalytics');
@@ -143,4 +143,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
-*/
+

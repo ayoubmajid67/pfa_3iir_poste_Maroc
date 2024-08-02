@@ -52,7 +52,7 @@ class clsTable {
 			}
 		}
 	}
-	#getOfficeHtmlStructure(office) {
+	static getOfficeHtmlStructure(office) {
 		return `
      <tr class='officeCard' officeId=${office.id}>
                                     <td class="officeId">${office.id}</td>
@@ -80,7 +80,7 @@ class clsTable {
 			this.tableContainerContentDom.innerHTML = "";
 
 			offices.forEach((office) => {
-				const officeHtmlStructure = this.#getOfficeHtmlStructure(office);
+				const officeHtmlStructure = clsTable.getOfficeHtmlStructure(office);
 				this.tableContainerContentDom.insertAdjacentHTML("beforeend", officeHtmlStructure);
 			});
 		} catch (error) {
@@ -109,7 +109,8 @@ class clsTable {
 	}
 
 	#editOfficeInputTrack(input, officeOptionName) {
-		if (input.value.trim() != this.officeColumnsPrevValues[officeOptionName]) this.OfficeChangeInputsInfo[officeOptionName] = true;
+		const value = input.value.trim();
+		if (value && value != this.officeColumnsPrevValues[officeOptionName]) this.OfficeChangeInputsInfo[officeOptionName] = true;
 		else this.OfficeChangeInputsInfo[officeOptionName] = false;
 	}
 	#addEventChangeValueTrackerToOfficeInputs(officeColumns, saveBtn) {
@@ -191,7 +192,6 @@ class clsTable {
 		let accessToken = clsLocalStorage.getToken();
 
 		try {
-			console.log(`${baseUrl}office/${officeId}/`);
 			const response = await axios.patch(`${baseUrl}office/${officeId}/`, updatedData, {
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
@@ -203,8 +203,8 @@ class clsTable {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);
@@ -215,7 +215,6 @@ class clsTable {
 
 	#getUpdatedData(officeColumns) {
 		let updatedData = {};
-		console.log(this.OfficeChangeInputsInfo);
 		if (this.OfficeChangeInputsInfo.name) updatedData.name = officeColumns.nameDom.querySelector("input").value;
 
 		if (this.OfficeChangeInputsInfo.city) updatedData.city = officeColumns.cityDom.querySelector("input").value;
@@ -239,15 +238,20 @@ class clsTable {
 
 		let updatedData = this.#getUpdatedData(officeColumns);
 
-		let data = await this.#updateOfficesCardApi(officeId, updatedData);
-		let officeData = data.office;
+		try {
+			let data = await this.#updateOfficesCardApi(officeId, updatedData);
+			let officeData = data.office;
 
-		const cancelBtn = targetOfficeCard.querySelector("button.cancel");
-		clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editOfficeCard(event)");
-		targetOfficeCard.classList.remove("editStat");
+			const cancelBtn = targetOfficeCard.querySelector("button.cancel");
+			clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editOfficeCard(event)");
+			targetOfficeCard.classList.remove("editStat");
 
-		this.#convertSaveCardColumnsToNormalMode(officeColumns, officeData);
-		this.#clearOfficePreviousAndChangeValues();
+			this.#convertSaveCardColumnsToNormalMode(officeColumns, officeData);
+			this.#clearOfficePreviousAndChangeValues();
+			clsUtile.alertHint(data.message, "success");
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
 	}
 }
 
@@ -258,6 +262,9 @@ class filter {
 			if (this.filterInputDom.value == "") {
 				this.#showAllOfficesBox();
 			}
+		});
+		this.filterInputDom.addEventListener("keypress", (event) => {
+			if (event.key == "Enter") this.searchBtnDom.click();
 		});
 		this.searchBtnDom = document.getElementById("searchBtn");
 		this.officesContainerDom = officesContainer;
@@ -285,19 +292,90 @@ class filter {
 }
 
 class clsAddOfficeForm {
+	#officeValues = {
+		name: "",
+		address: "",
+		city: "",
+	};
 	constructor(officesContainer) {
 		this.addOfficeFormDom = document.getElementById("addOfficeForm");
-		this.numberInputDom = document.getElementById("officeNumberAdd");
 		this.nameInputDom = document.getElementById("officeNameAdd");
 		this.addressInputDom = document.getElementById("officeAddressAdd");
 		this.cityInputDom = document.getElementById("officeCityAdd");
 		this.submitBtnDom = document.getElementById("submitAddOfficeBtn");
 		this.officesContainerDom = officesContainer;
+
+		this.addOfficeFormDom.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			this.submitBtnDom.disabled = true;
+
+			await this.manageAddNewOffice();
+			this.submitBtnDom.disabled = false;
+		});
 	}
-    
+	#fillAddOfficeFromValues() {
+		this.#officeValues.name = this.nameInputDom.value;
+		this.#officeValues.address = this.addressInputDom.value;
+		this.#officeValues.city = this.cityInputDom.value;
+	}
+	#clearAffOfficeInputs() {
+		this.nameInputDom.value = "";
+		this.addressInputDom.value = "";
+		this.cityInputDom.value = "";
+	}
+
+	async #addNewOfficeApi() {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.post(
+				`${baseUrl}office/`,
+
+				this.#officeValues,
+
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			const data = response.data;
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+
+	async manageAddNewOffice() {
+		this.#fillAddOfficeFromValues();
+		try {
+			let data = await this.#addNewOfficeApi();
+			let office = data.office;
+			const officeHtmlStructure = clsTable.getOfficeHtmlStructure(office);
+			this.officesContainerDom.insertAdjacentHTML("beforeend", officeHtmlStructure);
+
+			this.#clearAffOfficeInputs();
+			clsUtile.alertHint(data.message, "success");
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
+	}
 }
 
 // main : --------------------------------------
-const tableObject = new clsTable();
-const filterObject = new filter(tableObject.tableContainerContentDom);
-const addOfficeObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
+let tableObject ="";
+window.addEventListener("load",()=>{
+	tableObject = new clsTable();
+	const filterObject = new filter(tableObject.tableContainerContentDom);
+	const addOfficeObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
+	
+
+})
