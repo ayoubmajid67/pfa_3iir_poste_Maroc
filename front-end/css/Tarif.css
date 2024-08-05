@@ -1,25 +1,53 @@
 body {
-    background-color: #f4f4f452;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
-    font-family: Arial, sans-serif;
-    margin-top: 100px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .container {
     padding: 20px;
+    margin-top: 80px;
+}
+
+.mainContent {
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.mainContent .mainTitle {
+    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
 .box {
     background: #fff;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-top: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
+    width: 85%;
 }
 
-.hidden {
-    display: none;
+@media (max-width :768px) {
+    .box {
+        width: 95%;
+    }
+}
+
+.box {
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    color: #333;
 }
 
 h2 {
@@ -27,6 +55,9 @@ h2 {
 }
 
 .table-responsive {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     margin-top: 20px;
     border-radius: 10px;
     overflow: hidden;
@@ -34,49 +65,187 @@ h2 {
 
 .table {
     border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+
 }
+@media(max-width :768px){
+    .table{ 
+        margin-top: -50px;
+    }
+    #toggleShowOfficesBtn{
+        margin-top: -50px;
+    }
+   .box.tableBox{
+     background-color: transparent;
+     box-shadow : none;
+   }
+}
+
+
 
 .table thead {
     border-radius: 10px 10px 0 0;
+    background: var(--primaryColor);
+    color: white;
+    font-weight: bold;
+}
+
+
+.table #tarifTableBody {
+    transition: 0.4s;
+
 }
 
 .table th, .table td {
     border-top: none;
+    vertical-align: middle;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
 }
+
+.table tr .btnColumn .btnContainer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+
+}
+
+.table tbody tr.editStat {
+
+    border-left: 2px solid var(--primaryColor);
+    box-shadow: 1px 2px 20px rgba(166, 165, 165, 0.098);
+}
+
+tr .btnColumn button {
+    background-color: var(--secondaryColor);
+    padding: 12px 15px;
+
+    border-radius: 10px;
+    color: white;
+    text-transform: capitalize;
+    font-weight: bold;
+}
+
+tr .editColumn button.cancel {
+    background-color: var(--primaryColor);
+}
+
+
+table th, td:not(:first-child) {
+    border-left: 1px solid;
+}
+
+table td input {
+    height: 100%;
+    padding: 8px 10px;
+}
+
+.table tbody tr:hover {
+    box-shadow: 1px 2px 20px rgba(0, 0, 0, 0.049);
+    background: white;
+}
+
 
 .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
     color: white;
-    border-radius: 8px;
-    margin-top: 10px; /* Add top margin to the submit button */
+    border-radius: 5px;
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
 .btn-primary:hover {
-    background-color: var(--secondaryColor);
+    background-color: #0056b3;
     border-color: #0056b3;
 }
 
-.btn-warning, .btn-danger, .btn-warning.modify-save {
-    background-color:var(--primaryColor);
-    border-color: var(--primaryColor);
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
     color: white;
     border-radius: 5px;
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
-.btn-warning:hover, .btn-danger:hover, .btn-warning.modify-save:hover {
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.btn-warning, .btn-danger {
+    background-color: #ed731d;
+    border-color: #ed731d;
+    color: white;
+    border-radius: 5px;
+    margin: 5px;
+    /* Add margin between buttons */
+}
+
+.btn-warning:hover, .btn-danger:hover {
     background-color: #d5631a;
     border-color: #d5631a;
 }
 
 .btn-success {
-    background-color: var(--fourthColor);
-    border-color: var(--fourthColor);
+    background-color: #28a745;
+    border-color: #28a745;
     color: white;
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 .btn-success:hover {
-    background-color: var(--fourthColor);
+    background-color: #218838;
     border-color: #218838;
+}
+
+.form-control {
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+input::placeholder {
+    color: #bbb;
+}
+
+input:focus, select:focus, textarea:focus, button:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.hidden {
+    display: none;
+}
+
+#addTarifForm {
+    display: flex;
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+#addTarifForm input {
+    padding: 25px 10px;
+
+
+}
+
+#addTarifForm button {
+    padding: 10px;
+    font-weight: bold;
 }

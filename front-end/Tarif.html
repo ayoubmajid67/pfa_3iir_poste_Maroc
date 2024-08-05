@@ -1,89 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarif History Dashboard</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/Tarif.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <!-- Navbar -->
-<div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
-    <div class="flex items-center w-1/3">
-        <a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10" id="siteLogo"></a>
-    </div>
-    <div class="flex items-center w-1/3">
-        <span class="text-black text-lg">Poste de Maroc</span>
-    </div>
-    <div class="flex justify-center w-1/3">
-        <span class="text-black text-lg" id="username">userName</span>
-    </div>
-    <div class="flex justify-end w-1/3">
-        <span class="text-black text-lg" id="status">status (admin, chef, agent)</span>
-    </div>
-</div>
-    <div class="container">
-        <h1 class="text-center my-4">Tarif History Dashboard</h1>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Tarif History Dashboard</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/dashboard.css" />
+		<link rel="stylesheet" href="css/Tarif.css" />
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	</head>
+	<body>
+		<!-- Navbar -->
+		<div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
+			<div class="flex items-center w-1/3">
+				<a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10" id="siteLogo" /></a>
+			</div>
+			<div class="flex items-center w-1/3">
+				<span class="text-black text-lg">Poste de Maroc</span>
+			</div>
+			<div class="flex justify-center w-1/3">
+				<span class="text-black text-lg" id="username">userName</span>
+			</div>
+			<div class="flex justify-end w-1/3">
+				<span class="text-black text-lg" id="status">status (admin, chef, agent)</span>
+			</div>
+		</div>
 
-        <!-- Filter Section for Tarif History -->
-        <div class="box mb-4">
-            <div class="tarif-section row justify-content-center">
-                <div class="col-md-3">
-                    <label for="startDate">From:</label>
-                    <input type="date" id="startDate" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="endDate">To:</label>
-                    <input type="date" id="endDate" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="tarifType">Type:</label>
-                    <select id="tarifType" class="form-control">
-                        <option value="all">All</option>
-                        <option value="courrier">Courrier</option>
-                        <option value="colis">Colis</option>
-                    </select>
-                </div>
-                <div class="col-md-2 mt-4">
-                    <button id="submitTarifBtn" class="btn btn-primary w-100">Submit</button>
-                </div>
-            </div>
-        </div>
+		<div class="mainContent">
+			<h1 class="text-center mainTitle">Gestion des Tarifs</h1>
 
-        <!-- Analytics Section for Tarif History -->
-        <div class="box">
-            <div class="tarif-analytics-section">
-                <div id="tarifAnalytics" class="hidden">
-                    <h2>Tarif History</h2>
-                    <div class="text-center mb-3">
-                        <button id="addTarifBtn" class="btn btn-success">Ajouter Tarif</button>
-                    </div>
-                    <canvas id="tarifChart" class="mb-4"></canvas>
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Poids Min</th>
-                                    <th>Poids Max</th>
-                                    <th>Status</th>
-                                    <th>Prix</th>
-                                    <th>Modifier</th>
-                                    <th>Supprimer</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tarifTableBody">
-                                <!-- Data will be inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+			<!-- Filter Section for Tarif History -->
+			<div class="box mb-4">
+				<div class="tarif-section row justify-content-center">
+					<div class="col-md-3">
+						<label for="startDate">min weight:</label>
+						<input type="number" id="minWeight" class="form-control" />
+					</div>
+					<div class="col-md-3">
+						<label for="endDate">max weight:</label>
+						<input type="number" id="maxWeight" class="form-control" />
+					</div>
+					<div class="col-md-3 prductChoiceContainer">
+						<label for="tarifType">Type:</label>
+						<select id="tarifType" class="form-control">
+							<option value="all">All</option>
+							<option value="colis" id="1">Colis</option>
+							<option value="courrier" id="2">Courrier</option>
+						</select>
+					</div>
+					<div class="col-md-2 mt-4">
+						<button id="searchTarifBtn" class="btn btn-primary w-100">search</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- User Table Section -->
+
+			<div class="box tableBox">
+				<div id="tarifTableSection">
+					<h2 class="text-center">Tarifs</h2>
+					<div class="table-responsive">
+						<table class="table table-hover table-striped">
+							<thead>
+								<tr>
+									<th>Produit</th>
+									<th>Poids Min (g)</th>
+									<th>Poids Max (g)</th>
+									<th>Status</th>
+									<th>Prix (DH)</th>
+									<th>Action</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="tarifTableBody">
+								<!-- Data will be inserted here -->
+								<tr>
+									<td class="produit">1</td>
+									<td class="min">0</td>
+									<td class="max">500</td>
+									<td class="status">activated</td>
+									<td class="prix">500</td>
+									<td class="btnColumn editColumn">
+										<div class="btnContainer">
+											<button onclick="tableObject.editTarifCard(event)" class="edit">edit</button>
+										</div>
+									</td>
+									<td class="btnColumn saveColumn">
+										<div class="btnContainer">
+											<button disabled onclick="tableObject.saveOTarifCard(event)">Save</button>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="text-center mt-4">
+						<button id="toggleshowTarifsBtn" class="btn btn-primary">Show All Tarifs</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Add User Section -->
+			<div class="box mt-4 ">
+				<h2 class="text-center">Ajouter un Tarif</h2>
+				<form id="addTarifForm">
+					<div class="form-group">
+						<label for="tarifTypeInput">Produit:</label>
+						<select id="tarifTypeInput" class="form-control">
+							<option value="all">All</option>
+							<option value="colis" id="1">Colis</option>
+							<option value="courrier" id="2">Courrier</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="addTarifMinWeight">Pois min:</label>
+						<input type="text" id="addTarifMinWeight" class="form-control" placeholder="Enter Poits Min" required />
+					</div>
+					<div class="form-group">
+						<label for="addTarifMaxWeight">Pois Maz:</label>
+						<input type="text" id="addTarifMaxWeight" class="form-control" placeholder="Enter Poits max" required />
+					</div>
+					<div class="form-group">
+						<label for="email">Email:</label>
+						<input type="email" id="addUserEmail" class="form-control" placeholder="Enter email" required />
+					</div>
+					<div class="form-group">
+						<label for="password">Status:</label>
+						<select id="tarifStatusInput" class="form-control">
+							<option value="activated">activated</option>
+							<option value="disabled">disabled</option>
+						</select>
+					</div>
+
+					<div class="form-group">
+						<label for="addTarifPrice">Prix(DH):</label>
+						<input type="number" id="addTarifPrice" class="form-control" placeholder="Enter Prix" required />
+					</div>
+
+					<button type="submit" class="btn btn-success w-100" id="submitAddTarifBtn">Ajouter Tarif</button>
+				</form>
+			</div>
+		</div>
 
 		<section class="hint">
 			<div class="alert alert-primary">
@@ -92,10 +150,16 @@
 			</div>
 		</section>
 
+		<section class="hint">
+			<div class="alert alert-primary">
+				<h3 class="alert-title">Hello World</h3>
+				<p class="alert-content">Lorem ipsum</p>
+			</div>
+		</section>
 
-    		<!-- axios library -->
+		<!-- axios library -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="js/script.js"></script>
-    <script src="js/Tarif.js"></script>
-</body>
+		<script src="js/script.js"></script>
+		<script src="js/Tarif.js"></script>
+	</body>
 </html>

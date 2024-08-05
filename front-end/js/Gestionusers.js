@@ -1,6 +1,7 @@
 class clsTable {
 	static toggleUserBtnContent = ["Show All  users", "Hide All users"];
 	constructor() {
+		this.userTable = document.querySelector(".table-responsive .table");
 		this.tableContainerContentDom = document.getElementById("userTableBody");
 		this.toggleUsersShowBtnDom = document.getElementById("toggleshowUsersBtn");
 		this.usersFilterInput = document.getElementById("userNumber");
@@ -27,13 +28,55 @@ class clsTable {
 		};
 
 		this.toggleUsersShowBtnDom.addEventListener("click", () => {
-			this.#toggleOfficeShow();
+			this.#toggleUserShow();
 		});
 
 		this.manageGetUsers();
+		this.handelTableResponsive();
+	}
+	handelTableResponsive() {
+		let newFontSize;
+		if (window.innerWidth >= 1200) {
+			this.userTable.removeAttribute("style");
+			/*
+			  with 9 columns : 
+			  the  convenient  font-size of the table content at 1500px (window width ) : 
+			   1500 (window width) -> 11px (font-size)
+			    y  (window width )-> ? (font-size) 
+			   
+			   ?= (y* 11 )/1500
+			 
+			 */
+
+			const WidthRole = {
+				basicWindowWidth: 1500,
+				basicFontSize: 11,
+			};
+			const newFontSize = Math.floor((WidthRole.basicFontSize * window.innerWidth) / WidthRole.basicWindowWidth);
+			this.userTable.style.fontSize = `${newFontSize}px`;
+		} else {
+			/*
+			  with 7 columns : 
+			  the  convenient  scale of the table content at 1500px (window width ) : 
+			   1000 (window width) -> 0.80 (scale)
+			    y  (window width )-> ? (scale) 
+			   
+			   ?= (y* 0.80 )/1000
+			 
+			 */
+
+			this.userTable.style.fontSize = `9px`;
+			const scaleRole = {
+				basicWindowWidth: 1000,
+				basicScaleValue: 0.8,
+			};
+			if (window.innerWidth <= 768) scaleRole.basicScaleValue = 0.798;
+			const newScaleValue = (scaleRole.basicScaleValue * window.innerWidth) / scaleRole.basicWindowWidth;
+			this.userTable.style.transform = `scale(${newScaleValue})`;
+		}
 	}
 
-	#toggleOfficeShow() {
+	#toggleUserShow() {
 		const isHidden = Number(this.tableContainerContentDom.classList.contains("hidden"));
 		this.toggleUsersShowBtnDom.textContent = clsTable.toggleUserBtnContent[isHidden];
 		this.tableContainerContentDom.classList.toggle("hidden");
@@ -146,10 +189,10 @@ class clsTable {
 		}
 	}
 
-	#editUserInputTrack(input, officeOptionName) {
+	#editUserInputTrack(input, userOptionName) {
 		const value = input.value.trim();
-		if (value && value != this.userColumnsPrevValues[officeOptionName]) this.userChangeInputsInfo[officeOptionName] = true;
-		else this.userChangeInputsInfo[officeOptionName] = false;
+		if (value && value != this.userColumnsPrevValues[userOptionName]) this.userChangeInputsInfo[userOptionName] = true;
+		else this.userChangeInputsInfo[userOptionName] = false;
 	}
 	#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn) {
 		userColumns.cinDom.addEventListener("input", (event) => {
@@ -184,8 +227,8 @@ class clsTable {
 
 	#cancelEditPrevUserCards() {
 		const editStatCards = this.tableContainerContentDom.querySelectorAll(".editStat");
-		editStatCards.forEach((officeCard) => {
-			const cancelBtn = officeCard.querySelector("button.cancel");
+		editStatCards.forEach((userCard) => {
+			const cancelBtn = userCard.querySelector("button.cancel");
 			cancelBtn.click();
 		});
 	}
@@ -195,18 +238,18 @@ class clsTable {
 
 		const editBtn = event.target;
 
-		clsUtile.switchBtnHandler(editBtn, "cancel", "cancel", "tableObject.cancelEditOfficeCard(event)");
-		const targetOfficeCard = editBtn.closest(".userCard");
-		targetOfficeCard.classList.add("editStat");
-		const saveBtn = targetOfficeCard.querySelector(".saveColumn button");
+		clsUtile.switchBtnHandler(editBtn, "cancel", "cancel", "tableObject.cancelEditUserCard(event)");
+		const targetUserCard = editBtn.closest(".userCard");
+		targetUserCard.classList.add("editStat");
+		const saveBtn = targetUserCard.querySelector(".saveColumn button");
 		let userColumns = {
-			cinDom: targetOfficeCard.querySelector(".cin"),
-			firstNameDom: targetOfficeCard.querySelector(".nom"),
-			lastNameDom: targetOfficeCard.querySelector(".pernom"),
-			emailDom: targetOfficeCard.querySelector(".email"),
-			roleDom: targetOfficeCard.querySelector(".role"),
-			officeDom: targetOfficeCard.querySelector(".office"),
-			statusDom: targetOfficeCard.querySelector(".status"),
+			cinDom: targetUserCard.querySelector(".cin"),
+			firstNameDom: targetUserCard.querySelector(".nom"),
+			lastNameDom: targetUserCard.querySelector(".pernom"),
+			emailDom: targetUserCard.querySelector(".email"),
+			roleDom: targetUserCard.querySelector(".role"),
+			officeDom: targetUserCard.querySelector(".office"),
+			statusDom: targetUserCard.querySelector(".status"),
 		};
 
 		this.#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn);
@@ -246,22 +289,22 @@ class clsTable {
 		this.userChangeInputsInfo.office = false;
 		this.userChangeInputsInfo.status = false;
 	}
-	cancelEditOfficeCard(event) {
+	cancelEditUserCard(event) {
 		const cancelBtn = event.target;
 		clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editUserCard(event)");
-		const targetOfficeCard = cancelBtn.closest(".userCard");
-		targetOfficeCard.classList.remove("editStat");
-		const saveBtn = targetOfficeCard.querySelector(".saveColumn button");
+		const targetUserCard = cancelBtn.closest(".userCard");
+		targetUserCard.classList.remove("editStat");
+		const saveBtn = targetUserCard.querySelector(".saveColumn button");
 		saveBtn.disabled = true;
 
 		let userColumns = {
-			cinDom: targetOfficeCard.querySelector(".cin"),
-			firstNameDom: targetOfficeCard.querySelector(".nom"),
-			lastNameDom: targetOfficeCard.querySelector(".pernom"),
-			emailDom: targetOfficeCard.querySelector(".email"),
-			roleDom: targetOfficeCard.querySelector(".role"),
-			officeDom: targetOfficeCard.querySelector(".office"),
-			statusDom: targetOfficeCard.querySelector(".status"),
+			cinDom: targetUserCard.querySelector(".cin"),
+			firstNameDom: targetUserCard.querySelector(".nom"),
+			lastNameDom: targetUserCard.querySelector(".pernom"),
+			emailDom: targetUserCard.querySelector(".email"),
+			roleDom: targetUserCard.querySelector(".role"),
+			officeDom: targetUserCard.querySelector(".office"),
+			statusDom: targetUserCard.querySelector(".status"),
 		};
 		this.#convertEditedCardColumnsToNormalMode(userColumns);
 		this.#clearUserPreviousAndChangeValues();
@@ -374,7 +417,7 @@ class filter {
 	}
 }
 
-class clsAddOfficeForm {
+class clsAddUserForm {
 	#userValues = {
 		cin: "",
 		first_name: "",
@@ -472,8 +515,8 @@ class clsAddOfficeForm {
 		try {
 			let data = await this.#addNewUserApi();
 			let user = data.user;
-			const officeHtmlStructure = clsTable.getUserHtmlStructure(user);
-			this.usersContainerDom.insertAdjacentHTML("beforeend", officeHtmlStructure);
+			const userHtmlStructure = clsTable.getUserHtmlStructure(user);
+			this.usersContainerDom.insertAdjacentHTML("beforeend", userHtmlStructure);
 
 			this.#clearAddUserInputs();
 			clsUtile.alertHint(data.message, "success");
@@ -484,9 +527,14 @@ class clsAddOfficeForm {
 }
 
 // main : --------------------------------------
+
 let tableObject = "";
 window.addEventListener("load", () => {
 	tableObject = new clsTable();
 	const filterObject = new filter(tableObject.tableContainerContentDom);
-	const addUserObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
+	const addUserObject = new clsAddUserForm(tableObject.tableContainerContentDom);
+});
+
+window.addEventListener("resize", () => {
+	tableObject.handelTableResponsive();
 });

@@ -1,6 +1,7 @@
 class clsTable {
 	static toggleOfficeBtnContent = ["Show All offices", "Hide All offices"];
 	constructor() {
+		this.userTable = document.querySelector(".table-responsive .table");
 		this.tableContainerContentDom = document.getElementById("officeTableBody");
 		this.toggleOfficesShowBtnDom = document.getElementById("toggleShowOfficesBtn");
 		this.officeFilter = document.getElementById("officeNumber");
@@ -20,6 +21,54 @@ class clsTable {
 		});
 
 		this.manageGetOffices();
+		this.handelTableResponsive();
+	}
+
+	handelTableResponsive() {
+		if (window.innerHeight >= 1600) {
+			this.userTable.removeAttribute("style");
+			return;
+		}
+
+		if (window.innerWidth >= 1000) {
+			this.userTable.removeAttribute("style");
+			/*
+			  with 7 columns : 
+			  the  convenient  font-size of the table content at 1400px (window width ) : 
+			   1450 (window width) -> 16px (font-size)
+			    y  (window width )-> ? (font-size) 
+			   
+			   ?= (y* 16 )/1400
+			 
+			 */
+
+			const WidthRole = {
+				basicWindowWidth: 1400,
+				basicFontSize: 16,
+			};
+			const newFontSize = Math.floor((WidthRole.basicFontSize * window.innerWidth) / WidthRole.basicWindowWidth);
+			this.userTable.style.fontSize = `${newFontSize}px`;
+		} else {
+			/*
+			  with 7 columns : 
+			  the  convenient  scale of the table content at 1500px (window width ) : 
+			   800 (window width) -> 0.80 (scale)
+			    y  (window width )-> ? (scale) 
+			   
+			   ?= (y* 0.80 )/800
+			 
+			 */
+
+			this.userTable.style.fontSize = `9px`;
+			const scaleRole = {
+				basicWindowWidth: 800,
+				basicScaleValue: 0.8,
+			};
+			if (window.innerWidth <= 768) scaleRole.basicScaleValue = 0.82;
+
+			const newScaleValue = (scaleRole.basicScaleValue * window.innerWidth) / scaleRole.basicWindowWidth;
+			this.userTable.style.transform = `scale(${newScaleValue})`;
+		}
 	}
 
 	#toggleOfficeShow() {
@@ -226,6 +275,7 @@ class clsTable {
 		const saveBtn = event.target;
 
 		if (!this.#checkIsAllowToActivateSaveBtn(saveBtn)) return;
+		saveBtn.disabled = true;
 
 		const targetOfficeCard = saveBtn.closest(".officeCard");
 		const officeId = targetOfficeCard.getAttribute("officeId");
@@ -371,11 +421,12 @@ class clsAddOfficeForm {
 }
 
 // main : --------------------------------------
-let tableObject ="";
-window.addEventListener("load",()=>{
+let tableObject = "";
+window.addEventListener("load", () => {
 	tableObject = new clsTable();
 	const filterObject = new filter(tableObject.tableContainerContentDom);
 	const addOfficeObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
-	
-
-})
+});
+window.addEventListener("resize", () => {
+	tableObject.handelTableResponsive();
+});

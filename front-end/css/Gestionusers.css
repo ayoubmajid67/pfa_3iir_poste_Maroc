@@ -9,11 +9,18 @@ body {
     padding: 20px;
     margin-top: 80px;
 }
-.mainContent{
+
+.mainContent {
+    margin-top: 70px;
     display: flex;
     flex-direction: column;
-align-items: center;
+    align-items: center;
 
+}
+
+.mainContent .mainTitle {
+    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
 .box {
@@ -24,8 +31,11 @@ align-items: center;
     margin-bottom: 20px;
     width: 90%;
 }
-@media (max-width :768px){
-    .box{
+
+
+
+@media (max-width :768px) {
+    .box {
         width: 95%;
     }
 }
@@ -39,6 +49,9 @@ h2 {
 }
 
 .table-responsive {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     margin-top: 20px;
     border-radius: 10px;
     overflow: hidden;
@@ -46,8 +59,25 @@ h2 {
 
 .table {
     border-radius: 10px;
-    font-size: 12px;
+    width: 100%;
+    max-width: 100%;
+
 }
+@media(max-width :768px){
+    .table{ 
+        margin-top: -50px;
+    }
+    #toggleShowOfficesBtn{
+        margin-top: -50px;
+    }
+   .box.tableBox{
+     background-color: transparent;
+     box-shadow : none;
+   }
+}
+
+
+
 
 .table thead {
     border-radius: 10px 10px 0 0;
@@ -61,44 +91,11 @@ h2 {
     background: var(--primaryColor);
     color: white;
     font-weight: bold;
-}
 
-/* dakchi dyale 9di ou sf */
-@media (max-width:1450px) {
-
-    .table {
-        font-size: 11px;
-        transform: scale(0.84);
-
-
-    }
-}
-@media (max-width:992px) {
-    .table {
-        font-size: 9px;
-        transform: scale(0.74) translateX(-15px);
-
-    }
-}
-
-
-@media (max-width:768px) {
-    .table {
-        font-size: 8px;
-        transform: scale(0.70) translateX(-100px);
-
-    }
 }
 
 
 
-@media (max-width:552px) {
-    .table {
-        font-size: 7px;
-        transform: scale(0.6) translateX(-150px);
-
-    }
-}
 
 .table #officeTableBody {
     transition: 0.4s;
@@ -181,7 +178,8 @@ table td input {
     border-color: #007bff;
     color: white;
     border-radius: 5px;
-    margin-top: 10px; /* Add top margin to the submit button */
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
 .btn-primary:hover {
@@ -194,7 +192,8 @@ table td input {
     border-color: #6c757d;
     color: white;
     border-radius: 5px;
-    margin-top: 10px; /* Add top margin to the submit button */
+    margin-top: 10px;
+    /* Add top margin to the submit button */
 }
 
 .btn-secondary:hover {
@@ -207,7 +206,8 @@ table td input {
     border-color: #ed731d;
     color: white;
     border-radius: 5px;
-    margin: 5px; /* Add margin between buttons */
+    margin: 5px;
+    /* Add margin between buttons */
 }
 
 .btn-warning:hover, .btn-danger:hover {

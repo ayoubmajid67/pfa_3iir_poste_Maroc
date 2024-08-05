@@ -31,7 +31,7 @@
 		</div>
 
 		<div class="mainContent">
-			<h1 class="text-center my-4">Gestion des Utilisateurs</h1>
+			<h1 class="text-center  mainTitle">Gestion des Utilisateurs</h1>
 
 			<!-- Office Number Input Section -->
 			<div class="box mb-4">
@@ -48,7 +48,7 @@
 
 			<!-- User Table Section -->
 
-			<div class="box">
+			<div class="box tableBox">
 				<div id="userTableSection">
 					<h2 class="text-center">Users</h2>
 					<div class="table-responsive">
@@ -78,12 +78,12 @@
 									<td class="status">active</td>
 									<td class="btnColumn editColumn">
 										<div class="btnContainer">
-											<button onclick="tableObject.editOfficeCard(event)" class="edit">edit</button>
+											<button onclick="tableObject.editUserCard(event)" class="edit">edit</button>
 										</div>
 									</td>
 									<td class="btnColumn saveColumn">
 										<div class="btnContainer">
-											<button disabled onclick="tableObject.saveOfficeCard(event)">Save</button>
+											<button disabled onclick="tableObject.saveUserCard(event)">Save</button>
 										</div>
 									</td>
 								</tr>
@@ -105,15 +105,15 @@
 						<input type="text" id="addUserCin" class="form-control" placeholder="Enter CIN" required />
 					</div>
 					<div class="form-group">
-						<label for="firstName">First Name:</label>
+						<label for="addUserFirstName">First Name:</label>
 						<input type="text" id="addUserFirstName" class="form-control" placeholder="Enter first name" required />
 					</div>
 					<div class="form-group">
-						<label for="lastName">Last Name:</label>
+						<label for="addUserLastNam">Last Name:</label>
 						<input type="text" id="addUserLastName" class="form-control" placeholder="Enter last name" required />
 					</div>
 					<div class="form-group">
-						<label for="email">Email:</label>
+						<label for="addUserEmail">Email:</label>
 						<input type="email" id="addUserEmail" class="form-control" placeholder="Enter email" required />
 					</div>
 					<div class="form-group">
