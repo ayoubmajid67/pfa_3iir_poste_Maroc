@@ -31,8 +31,12 @@ class clsTable {
 			this.#toggleOfficeShow();
 		});
 
-		this.manageGetTarifs();
 		this.handelTableResponsive();
+		return this.#init();
+	}
+	async #init() {
+		await this.manageGetTarifs();
+		return this;
 	}
 	handelTableResponsive() {
 		if (window.innerHeight >= 1600) {
@@ -112,6 +116,7 @@ class clsTable {
 	}
 	static getOptionsHtmlFromProduct(currentProductName) {
 		let content = "";
+
 		clsTable.productsList.forEach((product) => {
 			content += `<option value="${product.name}" id="${product.id}"   ${currentProductName == product.name ? "selected" : ""} >${product.name}</option>`;
 		});
@@ -124,7 +129,7 @@ class clsTable {
 		try {
 			clsTable.productsList = await clsTable.getProductsApi();
 		} catch (error) {
-			console.log(error.message, error.type);
+			clsUtile.alertHint(error.message, error.type);
 		}
 	}
 	async #getTarifsApi() {
@@ -388,7 +393,6 @@ n>
 
 		try {
 			let tarifData = await this.#updateTarifCardApi(tarifId, updatedData);
-			console.log(tarifData);
 
 			const cancelBtn = targetTarifCard.querySelector("button.cancel");
 			clsUtile.switchBtnHandler(cancelBtn, "edit", "Edit", "tableObject.editTarifCard(event)");
@@ -417,8 +421,8 @@ class filter {
 		this.filterInputsDom.maxWeight.addEventListener("keypress", (event) => {
 			if (event.key == "Enter") this.filterInputsDom.tarifType.focus();
 		});
-        
-		this.searchBtnDom = document.getElementById("searchBtn");
+
+		this.searchBtnDom = document.getElementById("searchTarifBtn");
 		this.tarifsContainerDom = tarifsContainer;
 		this.searchBtnDom.addEventListener("click", () => {
 			this.searchBtnDom.disabled = true;
@@ -427,8 +431,7 @@ class filter {
 		});
 		this.#fillTarifTypes();
 	}
-	async #fillTarifTypes() {
-		const productList = await clsTable.getProductsApi();
+	#fillTarifTypes() {
 		this.filterInputsDom.tarifType.innerHTML = `
       <select>
 <option value="all">All</option>
@@ -438,93 +441,93 @@ class filter {
 							
         `;
 	}
-	#showAllUsersBox() {
-		this.tarifsContainerDom.querySelectorAll(".userCard").forEach((userBox) => {
-			userBox.style.display = "table-row";
-		});
+
+	#chequeFilterInputsValue(filterInputsValue) {
+		if (!filterInputsValue.minWeightValue) filterInputsValue.minWeightValue = 0;
+		if (!filterInputsValue.maxWeightValue) filterInputsValue.maxWeightValue = Number.MAX_SAFE_INTEGER;
+		if (filterInputsValue.tarifTypeValue == "all") filterInputsValue.tarifTypeValue = "";
+		filterInputsValue.minWeightValue = Number(filterInputsValue.minWeightValue);
+		filterInputsValue.maxWeightValue = Number(filterInputsValue.maxWeightValue);
 	}
-    //  stop point : 
 	#filterTarifsContainer() {
-		let numCinUser = this.filterInputDom.value.trim();
-		if (numCinUser) {
-			this.tarifsContainerDom.querySelectorAll(".userCard").forEach((userBox) => {
-				if (userBox.getAttribute("userCin") == numCinUser) userBox.style.display = "table-row";
-				else userBox.style.display = "none";
-			});
-		}
+		let filterInputsValue = {
+			minWeightValue: this.filterInputsDom.minWeight.value,
+			maxWeightValue: this.filterInputsDom.maxWeight.value,
+			tarifTypeValue: this.filterInputsDom.tarifType.value,
+		};
+		this.#chequeFilterInputsValue(filterInputsValue);
+
+		this.tarifsContainerDom.querySelectorAll(".tarifCard").forEach((tarifBox) => {
+			const tarifBoxInfo = {
+				minWeight: tarifBox.querySelector(".min").textContent,
+				maxWeight: tarifBox.querySelector(".max").textContent,
+				type: tarifBox.querySelector(".product").textContent,
+			};
+
+			if (tarifBoxInfo.minWeight >= filterInputsValue.minWeightValue && tarifBoxInfo.maxWeight <= filterInputsValue.maxWeightValue && (!filterInputsValue.tarifTypeValue || tarifBoxInfo.type == filterInputsValue.tarifTypeValue)) {
+				tarifBox.style.display = "table-row";
+			} else tarifBox.style.display = "none";
+		});
 	}
 }
 
-class clsAddOfficeForm {
-	#userValues = {
-		cin: "",
-		first_name: "",
-		last_name: "",
-		email: "",
-		password: "",
-		role: "",
-		office: "",
+class clsAddTarifForm {
+	#tarifValues = {
+		product: "",
+		min_weight: "",
+		max_weight: "",
+		status: "",
+		price: "",
 	};
 	constructor(usersContainer) {
-		this.addUserFormDom = document.getElementById("addUserForm");
-		this.cinInputDom = document.getElementById("addUserCin");
-		this.firstNameInputDom = document.getElementById("addUserFirstName");
-		this.lastNameInputDom = document.getElementById("addUserLastName");
-		this.emailInputDom = document.getElementById("addUserEmail");
-		this.passwordInputDom = document.getElementById("addUserPassword");
-		this.roleInputDom = document.getElementById("addUserRole");
-		this.officeInputDom = document.getElementById("addUserOffice");
-		this.statusInputDom = document.getElementById("addUserStatus");
-		this.submitBtnDom = document.getElementById("submitAddUserBtn");
-		this.togglePasswordIcon = this.addUserFormDom.querySelector(`#togglePassword`);
+		this.addTarifFormDom = document.getElementById("addTarifForm");
+		this.productInputDom = document.getElementById("tarifTypeInput");
+		this.minWeightInputDom = document.getElementById("addTarifMinWeight");
+		this.maxWeightInputDom = document.getElementById("addTarifMaxWeight");
+		this.statusInputDom = document.getElementById("tarifStatusInput");
+		this.priceInputDom = document.getElementById("addTarifPrice");
+		this.submitBtnDom = document.getElementById("submitAddTarifBtn");
 
-		this.usersContainerDom = usersContainer;
+		this.tarifsContainerDom = usersContainer;
 
-		this.togglePasswordIcon.addEventListener("click", () => {
-			this.#handelPasswordVisibilityIconToggle();
-		});
+		this.#fillTarifTypes();
 
-		this.addUserFormDom.addEventListener("submit", async (event) => {
+		this.addTarifFormDom.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			this.submitBtnDom.disabled = true;
 
-			await this.manageAddNewUser();
+			await this.manageAddNewTarif();
 			this.submitBtnDom.disabled = false;
 		});
 	}
-	#handelPasswordVisibilityIconToggle() {
-		clsUtile.handleVisibilityPassword(this.passwordInputDom, this.togglePasswordIcon);
-	}
-	#fillAddUserFormValues() {
-		this.#userValues.cin = this.cinInputDom.value;
-		this.#userValues.first_name = this.firstNameInputDom.value;
-		this.#userValues.last_name = this.lastNameInputDom.value;
-		this.#userValues.email = this.emailInputDom.value;
-		this.#userValues.password = this.passwordInputDom.value;
-		this.#userValues.role = this.roleInputDom.value;
-		this.#userValues.office = this.officeInputDom.value;
-		this.#userValues.status = this.statusInputDom.value;
-	}
-	#clearAddUserInputs() {
-		this.addUserFormDom.value = "";
-		this.cinInputDom.value = "";
-		this.firstNameInputDom.value = "";
-		this.lastNameInputDom.value = "";
-		this.emailInputDom.value = "";
-		this.passwordInputDom.value = "";
-		this.roleInputDom.value = "";
-		this.officeInputDom.value = "";
-		this.statusInputDom.value = "";
+	async #fillTarifTypes() {
+		this.productInputDom.innerHTML = `${clsTable.getOptionsHtmlFromProduct()}`;
 	}
 
-	async #addNewUserApi() {
+	#fillAddTarifFormValues() {
+		this.#tarifValues.product = this.productInputDom.options[this.productInputDom.selectedIndex].id;
+		// convert min max weight to number to prevent backend internal server error [extra :  price  ]  :
+		this.#tarifValues.min_weight = Number(this.minWeightInputDom.value);
+		this.#tarifValues.max_weight = Number(this.maxWeightInputDom.value);
+		this.#tarifValues.status = this.statusInputDom.value;
+		this.#tarifValues.price = Number(this.priceInputDom.value);
+	}
+	#clearAddTarifInputs() {
+		this.productInputDom = "";
+		this.minWeightInputDom = "";
+		this.maxWeightInputDom = "";
+		this.statusInputDom = "";
+		this.priceInputDom = "";
+	}
+
+	async #addNewTarifApi() {
 		let accessToken = clsLocalStorage.getToken();
 
 		try {
 			const response = await axios.post(
-				`${baseUrl}register/`,
+				`${baseUrl}weight-ranges/`,
 
-				this.#userValues,
+				this.#tarifValues,
 
 				{
 					headers: {
@@ -547,17 +550,17 @@ class clsAddOfficeForm {
 		}
 	}
 
-	async manageAddNewUser() {
-		this.#fillAddUserFormValues();
+	async manageAddNewTarif() {
+		this.#fillAddTarifFormValues();
 
 		try {
-			let data = await this.#addNewUserApi();
-			let user = data.user;
-			const officeHtmlStructure = clsTable.getTarifHtmlStructure(user);
-			this.usersContainerDom.insertAdjacentHTML("beforeend", officeHtmlStructure);
+			let tarif = await this.#addNewTarifApi();
 
-			this.#clearAddUserInputs();
-			clsUtile.alertHint(data.message, "success");
+			const tarifHtmlStructure = clsTable.getTarifHtmlStructure(tarif);
+			this.tarifsContainerDom.insertAdjacentHTML("beforeend", tarifHtmlStructure);
+
+			this.#clearAddTarifInputs();
+			clsUtile.alertHint("the Tarif added with success ", "success");
 		} catch (error) {
 			clsUtile.alertHint(error.message, error.type);
 		}
@@ -566,10 +569,12 @@ class clsAddOfficeForm {
 
 // main : --------------------------------------
 let tableObject = "";
-window.addEventListener("load", () => {
-	tableObject = new clsTable();
-	// const filterObject = new filter(tableObject.tableContainerContentDom);
-	// const addUserObject = new clsAddOfficeForm(tableObject.tableContainerContentDom);
+window.addEventListener("load", async () => {
+	tableObject = await new clsTable();
+
+	const filterObject = new filter(tableObject.tableContainerContentDom);
+
+	const addUserObject = new clsAddTarifForm(tableObject.tableContainerContentDom);
 });
 
 window.addEventListener("resize", () => {

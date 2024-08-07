@@ -55,7 +55,7 @@
 				</div>
 			</div>
 
-			<!-- User Table Section -->
+			<!-- tarif Table Section -->
 
 			<div class="box tableBox">
 				<div id="tarifTableSection">
@@ -101,32 +101,28 @@
 				</div>
 			</div>
 
-			<!-- Add User Section -->
+			<!-- Add Tarif Section -->
 			<div class="box mt-4 ">
 				<h2 class="text-center">Ajouter un Tarif</h2>
 				<form id="addTarifForm">
 					<div class="form-group">
 						<label for="tarifTypeInput">Produit:</label>
 						<select id="tarifTypeInput" class="form-control">
-							<option value="all">All</option>
-							<option value="colis" id="1">Colis</option>
-							<option value="courrier" id="2">Courrier</option>
+							<!-- <option value="colis" id="1">Colis</option>
+							<option value="courrier" id="2">Courrier</option> -->
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="addTarifMinWeight">Pois min:</label>
-						<input type="text" id="addTarifMinWeight" class="form-control" placeholder="Enter Poits Min" required />
+						<label for="addTarifMinWeight">Poids min:</label>
+						<input type="number" id="addTarifMinWeight" class="form-control" placeholder="Enter Poits Min" required />
 					</div>
 					<div class="form-group">
-						<label for="addTarifMaxWeight">Pois Maz:</label>
-						<input type="text" id="addTarifMaxWeight" class="form-control" placeholder="Enter Poits max" required />
+						<label for="addTarifMaxWeight">Poids Max:</label>
+						<input type="number" id="addTarifMaxWeight" class="form-control" placeholder="Enter Poits max" required />
 					</div>
+			
 					<div class="form-group">
-						<label for="email">Email:</label>
-						<input type="email" id="addUserEmail" class="form-control" placeholder="Enter email" required />
-					</div>
-					<div class="form-group">
-						<label for="password">Status:</label>
+						<label for="tarifStatusInput">Status:</label>
 						<select id="tarifStatusInput" class="form-control">
 							<option value="activated">activated</option>
 							<option value="disabled">disabled</option>
@@ -150,12 +146,7 @@
 			</div>
 		</section>
 
-		<section class="hint">
-			<div class="alert alert-primary">
-				<h3 class="alert-title">Hello World</h3>
-				<p class="alert-content">Lorem ipsum</p>
-			</div>
-		</section>
+
 
 		<!-- axios library -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
