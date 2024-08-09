@@ -1,3 +1,4 @@
+ 
 class clsTable {
 	static toggleTarifBtnContent = ["Show All  Tarifs", "Hide All Tarifs"];
 	static productsList = "";

@@ -1,3 +1,56 @@
+class clsOfficeInfo {
+	constructor() {
+		this.officeInfoContainer = document.querySelector(".officeInfoContainer");
+		this.officeIdSpanDom = this.officeInfoContainer.querySelector(".officeId");
+		this.officeNameSpanDom = this.officeInfoContainer.querySelector(".officeName");
+		this.officeAddressSpanDom = this.officeInfoContainer.querySelector(".officeAddress");
+		this.officeCitySpanDom = this.officeInfoContainer.querySelector(".officeCity");
+
+		this.managePushOfficeInfo();
+	}
+
+	async getOfficeInfoApi() {
+		let accessToken = clsLocalStorage.getToken();
+
+		try {
+			const response = await axios.get(`${baseUrl}office-info/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const data = response.data;
+
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
+
+	pushOfficeInfoToDom(officeInfo) {
+		this.officeIdSpanDom.textContent = officeInfo.id;
+		this.officeNameSpanDom.textContent = officeInfo.name;
+		this.officeAddressSpanDom.textContent = officeInfo.address;
+		this.officeCitySpanDom.textContent = officeInfo.city;
+	}
+	async managePushOfficeInfo() {
+		try {
+			let officeInfo = await this.getOfficeInfoApi();
+		
+
+			this.pushOfficeInfoToDom(officeInfo);
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
+	}
+}
 class clsTable {
 	static toggleDepotsBtnContent = ["Show All  Depots", "Hide All Depots"];
 	static boxModeClass = "activeBox";
@@ -341,6 +394,7 @@ class filter {
 // main : --------------------------------------
 let tableObject = "";
 window.addEventListener("load", async () => {
+	const officeInfoObject = new clsOfficeInfo();
 	tableObject = new clsTable();
 	const filterObject = new filter(tableObject.tableContainerContentDom);
 });

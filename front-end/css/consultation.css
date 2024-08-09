@@ -347,3 +347,8 @@ input:focus, select:focus, textarea:focus, button:focus {
 
     background-color: var(--primaryColor);
 }
+
+
+.officeInfoContainer span{
+    color: #777;
+}
