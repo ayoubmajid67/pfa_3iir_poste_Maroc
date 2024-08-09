@@ -3,7 +3,7 @@ class clsTable {
 	static productsList = "";
 
 	constructor() {
-		this.userTable = document.querySelector(".table-responsive .table");
+		this.tarifTable = document.querySelector(".table-responsive .table");
 		this.tableContainerContentDom = document.getElementById("tarifTableBody");
 		this.toggleTarifShowBtnDom = document.getElementById("toggleshowTarifsBtn");
 		this.tarifFilterInputsDom = {
@@ -40,12 +40,12 @@ class clsTable {
 	}
 	handelTableResponsive() {
 		if (window.innerHeight >= 1600) {
-			this.userTable.removeAttribute("style");
+			this.tarifTable.removeAttribute("style");
 			return;
 		}
 
 		if (window.innerWidth >= 1000) {
-			this.userTable.removeAttribute("style");
+			this.tarifTable.removeAttribute("style");
 			/*
 			  with 6 columns : 
 			  the  convenient  font-size of the table content at 1400px (window width ) : 
@@ -61,7 +61,7 @@ class clsTable {
 				basicFontSize: 16,
 			};
 			const newFontSize = Math.floor((WidthRole.basicFontSize * window.innerWidth) / WidthRole.basicWindowWidth);
-			this.userTable.style.fontSize = `${newFontSize}px`;
+			this.tarifTable.style.fontSize = `${newFontSize}px`;
 		} else {
 			/*
 			  with 7 columns : 
@@ -73,7 +73,7 @@ class clsTable {
 			 
 			 */
 
-			this.userTable.style.fontSize = `9px`;
+			this.tarifTable.style.fontSize = `9px`;
 			const scaleRole = {
 				basicWindowWidth: 800,
 				basicScaleValue: 0.81,
@@ -81,7 +81,7 @@ class clsTable {
 			if (window.innerWidth <= 768) scaleRole.basicScaleValue = 0.82;
 
 			const newScaleValue = (scaleRole.basicScaleValue * window.innerWidth) / scaleRole.basicWindowWidth;
-			this.userTable.style.transform = `scale(${newScaleValue})`;
+			this.tarifTable.style.transform = `scale(${newScaleValue})`;
 		}
 	}
 

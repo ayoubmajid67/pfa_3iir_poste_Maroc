@@ -131,10 +131,15 @@ class clsLocalStorage {
 // user class :
 class clsUser {
 	// Checks if the user is logged in based on the presence of a token and username in localStorage
-	static usersPages = {
+	static usersPagesName = {
 		manager: ["consultation"],
 		admin: ["consultation", "tarif", "gestion offices", "gestion users"],
 		agent: ["envoyé", "consultation"],
+	};
+	static usersRealNameHtmlPages = {
+		manager: ["dashboard.html", "consultation.html"],
+		admin: ["dashboard.html", "consultation.html", "Tarif.html", "GestionOffice.html", "GestionUsers.html"],
+		agent: ["dashboard.html", "envoi.html", "consultation.html"],
 	};
 	static pagesName = {
 		envoyé: "envoi.html",
@@ -143,6 +148,13 @@ class clsUser {
 		"gestion offices": "GestionOffice.html",
 		"gestion users": "GestionUsers.html",
 	};
+
+	static isPageInRole(pageName) {
+		const userRole = clsLocalStorage.getRole();
+		// remove the extra slash in the begin : /pageName
+		pageName = pageName.slice(1);
+		return clsUser.usersRealNameHtmlPages[userRole].find((element) => element == pageName);
+	}
 
 	static isAdmin() {
 		return clsLocalStorage.getRole() == "admin";
@@ -293,11 +305,15 @@ class clsPage {
 		// if the user is already login we should go to dashboard page :
 		if (clsUser.isLogin() && this.isLoginPage()) this.goToPage("dashboard.html");
 	}
-	static async managePreventAccessToBasicRolePage() {
+	static async managePreventAccessToBasicRolePages() {
 		if (this.isAuthPage()) {
 			await clsUser.manageGetCriticalUserInfo();
 			if (!clsUser.isActiveUser()) {
 				await clsUtile.alertHint("Contact Your admin to activate your Account", "warning");
+				clsPage.goToDashboardPage();
+			}
+			if (!clsUser.isPageInRole(location.pathname)) {
+				await clsUtile.alertHint("You don't have permissions to access this page ", "warning");
 				clsPage.goToDashboardPage();
 			}
 		}
@@ -327,7 +343,7 @@ let headerObject = "";
 window.addEventListener("load", async () => {
 	clsPage.managePreventAccessAuthPage();
 	clsPage.managePreventAccessToLoginPage();
-	await clsPage.managePreventAccessToBasicRolePage();
+	await clsPage.managePreventAccessToBasicRolePages();
 	if (clsPage.isAuthPage()) {
 		headerObject = new clsHeader();
 	}

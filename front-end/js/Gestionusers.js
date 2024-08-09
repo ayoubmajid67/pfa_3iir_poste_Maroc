@@ -11,6 +11,7 @@ class clsTable {
 			firstName: "",
 			lastName: "",
 			email: "",
+			password: "",
 			role: "",
 			office: "",
 
@@ -21,6 +22,7 @@ class clsTable {
 			firstName: false,
 			lastName: false,
 			email: false,
+			password: false,
 			role: false,
 			office: false,
 
@@ -36,21 +38,21 @@ class clsTable {
 	}
 	handelTableResponsive() {
 		let newFontSize;
-		if (window.innerWidth >= 1200) {
+		if (window.innerWidth >= 1300) {
 			this.userTable.removeAttribute("style");
 			/*
-			  with 9 columns : 
+			  with 10 columns : 
 			  the  convenient  font-size of the table content at 1500px (window width ) : 
-			   1500 (window width) -> 11px (font-size)
+			   1500 (window width) -> 10px (font-size)
 			    y  (window width )-> ? (font-size) 
 			   
-			   ?= (y* 11 )/1500
+			   ?= (y* 10 )/1500
 			 
 			 */
 
 			const WidthRole = {
 				basicWindowWidth: 1500,
-				basicFontSize: 11,
+				basicFontSize: 10,
 			};
 			const newFontSize = Math.floor((WidthRole.basicFontSize * window.innerWidth) / WidthRole.basicWindowWidth);
 			this.userTable.style.fontSize = `${newFontSize}px`;
@@ -58,19 +60,19 @@ class clsTable {
 			/*
 			  with 7 columns : 
 			  the  convenient  scale of the table content at 1500px (window width ) : 
-			   1000 (window width) -> 0.80 (scale)
+			   1000 (window width) -> 0.78 (scale)
 			    y  (window width )-> ? (scale) 
 			   
 			   ?= (y* 0.80 )/1000
 			 
 			 */
 
-			this.userTable.style.fontSize = `9px`;
+			this.userTable.style.fontSize = `8px`;
 			const scaleRole = {
 				basicWindowWidth: 1000,
-				basicScaleValue: 0.8,
+				basicScaleValue: 0.74,
 			};
-			if (window.innerWidth <= 768) scaleRole.basicScaleValue = 0.798;
+			if (window.innerWidth <= 775) scaleRole.basicScaleValue = 0.70;
 			const newScaleValue = (scaleRole.basicScaleValue * window.innerWidth) / scaleRole.basicWindowWidth;
 			this.userTable.style.transform = `scale(${newScaleValue})`;
 		}
@@ -113,6 +115,7 @@ class clsTable {
 									<td class="nom">${user.first_name}</td>
 									<td class="pernom">${user.last_name}</td>
 									<td class="email">${user.email}</td>
+									<td class="password"></td>
 									<td class="role">${user.role}</td>
 									<td class="office">${user.office.id}</td>
 								
@@ -144,11 +147,23 @@ class clsTable {
 			await clsUtile.alertHint(error.message, error.type);
 		}
 	}
+	#setUserPreviousValues(userColumns) {
+		this.userColumnsPrevValues.cin = userColumns.cinDom.textContent;
+		this.userColumnsPrevValues.firstName = userColumns.firstNameDom.textContent;
+		this.userColumnsPrevValues.lastName = userColumns.lastNameDom.textContent;
+		this.userColumnsPrevValues.email = userColumns.emailDom.textContent;
+		this.userColumnsPrevValues.password = userColumns.passwordDom.textContent;
+		this.userColumnsPrevValues.role = userColumns.roleDom.textContent;
+		this.userColumnsPrevValues.office = userColumns.officeDom.textContent;
+		this.userColumnsPrevValues.status = userColumns.statusDom.textContent;
+	}
 	#convertEditedCardColumnsToEditMode(userColumns) {
 		userColumns.cinDom.innerHTML = `<input type="text" class="targetCin" value='${this.userColumnsPrevValues.cin}' />`;
 		userColumns.firstNameDom.innerHTML = `<input type="text" class="targetFirstName" value='${this.userColumnsPrevValues.firstName}' />`;
 		userColumns.lastNameDom.innerHTML = `<input type="text" class="targetLastName" value='${this.userColumnsPrevValues.lastName}' />`;
 		userColumns.emailDom.innerHTML = `<input type="text" class="targetEmail" value='${this.userColumnsPrevValues.email}' />`;
+		userColumns.passwordDom.innerHTML = `<input type="text" class="targetPassword" placeholder='enter a new password' />`;
+	
 		userColumns.roleDom.innerHTML = `
 		<select class="targetRole">
     <option value="admin" ${this.userColumnsPrevValues.role == "admin" ? "selected" : ""} >admin</option>
@@ -170,17 +185,9 @@ class clsTable {
 
 		userColumns.cinDom.querySelector("input").focus();
 	}
-	#setUserPreviousValues(userColumns) {
-		this.userColumnsPrevValues.cin = userColumns.cinDom.textContent;
-		this.userColumnsPrevValues.firstName = userColumns.firstNameDom.textContent;
-		this.userColumnsPrevValues.lastName = userColumns.lastNameDom.textContent;
-		this.userColumnsPrevValues.email = userColumns.emailDom.textContent;
-		this.userColumnsPrevValues.role = userColumns.roleDom.textContent;
-		this.userColumnsPrevValues.office = userColumns.officeDom.textContent;
-		this.userColumnsPrevValues.status = userColumns.statusDom.textContent;
-	}
+
 	#checkIsAllowToActivateSaveBtn(saveBtn) {
-		if (this.userChangeInputsInfo.cin || this.userChangeInputsInfo.firstName || this.userChangeInputsInfo.lastName || this.userChangeInputsInfo.email || this.userChangeInputsInfo.role || this.userChangeInputsInfo.office || this.userChangeInputsInfo.status) {
+		if (this.userChangeInputsInfo.cin || this.userChangeInputsInfo.firstName || this.userChangeInputsInfo.lastName || this.userChangeInputsInfo.email ||  this.userChangeInputsInfo.password  ||this.userChangeInputsInfo.role || this.userChangeInputsInfo.office || this.userChangeInputsInfo.status) {
 			saveBtn.disabled = false;
 			return true;
 		} else {
@@ -191,8 +198,10 @@ class clsTable {
 
 	#editUserInputTrack(input, userOptionName) {
 		const value = input.value.trim();
+	
 		if (value && value != this.userColumnsPrevValues[userOptionName]) this.userChangeInputsInfo[userOptionName] = true;
 		else this.userChangeInputsInfo[userOptionName] = false;
+
 	}
 	#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn) {
 		userColumns.cinDom.addEventListener("input", (event) => {
@@ -209,6 +218,11 @@ class clsTable {
 		});
 		userColumns.emailDom.addEventListener("input", (event) => {
 			this.#editUserInputTrack(event.target, "email");
+			this.#checkIsAllowToActivateSaveBtn(saveBtn);
+		});
+		userColumns.passwordDom.addEventListener("input", (event) => {
+			
+			this.#editUserInputTrack(event.target, "password");
 			this.#checkIsAllowToActivateSaveBtn(saveBtn);
 		});
 		userColumns.roleDom.addEventListener("change", (event) => {
@@ -247,10 +261,12 @@ class clsTable {
 			firstNameDom: targetUserCard.querySelector(".nom"),
 			lastNameDom: targetUserCard.querySelector(".pernom"),
 			emailDom: targetUserCard.querySelector(".email"),
+			passwordDom: targetUserCard.querySelector(".password"),
 			roleDom: targetUserCard.querySelector(".role"),
 			officeDom: targetUserCard.querySelector(".office"),
 			statusDom: targetUserCard.querySelector(".status"),
-		};
+		}; 
+
 
 		this.#addEventChangeValueTrackerToUserInputs(userColumns, saveBtn);
 		this.#setUserPreviousValues(userColumns);
@@ -261,6 +277,7 @@ class clsTable {
 		userColumns.firstNameDom.innerHTML = this.userColumnsPrevValues.firstName;
 		userColumns.lastNameDom.innerHTML = this.userColumnsPrevValues.lastName;
 		userColumns.emailDom.innerHTML = this.userColumnsPrevValues.email;
+		userColumns.passwordDom.innerHTML = this.userColumnsPrevValues.password;
 		userColumns.roleDom.innerHTML = this.userColumnsPrevValues.role;
 		userColumns.officeDom.innerHTML = this.userColumnsPrevValues.office;
 		userColumns.statusDom.innerHTML = this.userColumnsPrevValues.status;
@@ -270,6 +287,7 @@ class clsTable {
 		userColumns.firstNameDom.innerHTML = data.firstName;
 		userColumns.lastNameDom.innerHTML = data.lastName;
 		userColumns.emailDom.innerHTML = data.email;
+		userColumns.passwordDom.innerHTML = data.password;
 		userColumns.roleDom.innerHTML = data.role;
 		userColumns.officeDom.innerHTML = data.office;
 		userColumns.statusDom.innerHTML = data.status;
@@ -278,6 +296,7 @@ class clsTable {
 		this.userColumnsPrevValues.cin = "";
 		this.userColumnsPrevValues.lastName = "";
 		this.userColumnsPrevValues.email = "";
+		this.userColumnsPrevValues.password = "";
 		this.userColumnsPrevValues.role = "";
 		this.userColumnsPrevValues.office = "";
 		this.userColumnsPrevValues.status = "";
@@ -285,6 +304,7 @@ class clsTable {
 		this.userChangeInputsInfo.cin = false;
 		this.userChangeInputsInfo.lastName = false;
 		this.userChangeInputsInfo.email = false;
+		this.userChangeInputsInfo.password = false;
 		this.userChangeInputsInfo.role = false;
 		this.userChangeInputsInfo.office = false;
 		this.userChangeInputsInfo.status = false;
@@ -302,10 +322,12 @@ class clsTable {
 			firstNameDom: targetUserCard.querySelector(".nom"),
 			lastNameDom: targetUserCard.querySelector(".pernom"),
 			emailDom: targetUserCard.querySelector(".email"),
+			passwordDom: targetUserCard.querySelector(".password"),
 			roleDom: targetUserCard.querySelector(".role"),
 			officeDom: targetUserCard.querySelector(".office"),
 			statusDom: targetUserCard.querySelector(".status"),
 		};
+		console.log(userColumns); 
 		this.#convertEditedCardColumnsToNormalMode(userColumns);
 		this.#clearUserPreviousAndChangeValues();
 	}
@@ -340,6 +362,7 @@ class clsTable {
 		if (this.userChangeInputsInfo.firstName) updatedData.firstName = userColumns.firstNameDom.querySelector("input").value;
 		if (this.userChangeInputsInfo.lastName) updatedData.lastNameDom = userColumns.lastNameDom.querySelector("input").value;
 		if (this.userChangeInputsInfo.email) updatedData.email = userColumns.emailDom.querySelector("input").value;
+		if (this.userChangeInputsInfo.password) updatedData.password = userColumns.passwordDom.querySelector("input").value;
 		if (this.userChangeInputsInfo.role) updatedData.role = userColumns.roleDom.querySelector("select").value;
 		if (this.userChangeInputsInfo.office) updatedData.office = userColumns.officeDom.querySelector("input").value;
 		if (this.userChangeInputsInfo.status) updatedData.status = userColumns.statusDom.querySelector("select").value;
@@ -359,11 +382,13 @@ class clsTable {
 			firstNameDom: targetUserCard.querySelector(".nom"),
 			lastNameDom: targetUserCard.querySelector(".pernom"),
 			emailDom: targetUserCard.querySelector(".email"),
+			passwordDom: targetUserCard.querySelector(".password"),
 			roleDom: targetUserCard.querySelector(".role"),
 			officeDom: targetUserCard.querySelector(".office"),
 			statusDom: targetUserCard.querySelector(".status"),
 		};
 		let updatedData = this.#getUpdatedData(userColumns);
+	
 
 		try {
 			let userData = await this.#updateUserCardApi(userId, updatedData);

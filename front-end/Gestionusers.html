@@ -33,12 +33,12 @@
 		<div class="mainContent">
 			<h1 class="text-center  mainTitle">Gestion des Utilisateurs</h1>
 
-			<!-- Office Number Input Section -->
+			<!-- user Number Input Section -->
 			<div class="box mb-4">
 				<div class="form-group row justify-content-center">
 					<div class="col-md-6">
 						<label for="userNumber">N° CIN:</label>
-						<input type="text" id="userNumber" class="form-control" placeholder="Enter office number" />
+						<input type="text" id="userNumber" class="form-control" placeholder="Enter user cin" />
 					</div>
 					<div class="col-md-2 mt-4">
 						<button id="searchBtn" class="btn btn-primary w-100">Search</button>
@@ -59,7 +59,9 @@
 									<th>First Name</th>
 									<th>Last Name</th>
 									<th>Email</th>
+									<th>password</th>
 									<th>Role</th>
+									
 									<th>Office</th>
 									<th>Status</th>
 									<th>Action</th>
@@ -68,11 +70,13 @@
 							</thead>
 							<tbody id="userTableBody">
 								<!-- Data will be inserted here -->
-								<tr>
+								<!-- <tr>
 									<td class="cin">1</td>
 									<td class="nom">amin</td>
 									<td class="pernom">amin</td>
 									<td class="email">amin@gmail.com</td>
+									<td class="password">pass123</td>
+									<td class="role">admin</td>
 									<td class="office">1</td>
 									<td class="ville">rabat</td>
 									<td class="status">active</td>
@@ -86,7 +90,7 @@
 											<button disabled onclick="tableObject.saveUserCard(event)">Save</button>
 										</div>
 									</td>
-								</tr>
+								</tr> -->
 							</tbody>
 						</table>
 					</div>

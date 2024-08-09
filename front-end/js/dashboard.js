@@ -20,14 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 class SideBarClass {
 	constructor() {
 		this.sidebarDom = document.querySelector(".sidebar");
-		this.buttonsLInks = {
-			envoyé: "./envoi.html",
-			consultation: "./consultation.html",
-			tarif: "./Tarif.html",
-			"gestion office": "./GestionOffice.html",
-			"gestion users": "./GestionUsers.html",
-		};
-
+		
 		
 	 if(clsUser.isActiveUser()){
 		this.#addSidebarButtons(); 
@@ -56,7 +49,7 @@ class SideBarClass {
 	
 	async #addSidebarButtons(){
         const userRole=clsLocalStorage.getRole();
-		clsUser.usersPages[userRole].forEach(pageName=>{
+		clsUser.usersPagesName[userRole].forEach(pageName=>{
                   const htmlStructure=this.#getButtonHtmlStructure(pageName); 
 				  this.sidebarDom.insertAdjacentHTML("beforeend",htmlStructure)
 

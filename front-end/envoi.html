@@ -1,151 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page d’Envoi</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/envoi.css">
-    <style>
-        @media print {
-            .print-button {
-                display: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
-        <div class="flex items-center w-1/3">
-            <a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10"></a>
-        </div>
-        <div class="flex items-center w-1/3">
-            <span class="text-black text-lg">Poste de Maroc</span>
-        </div>
-        <div class="flex justify-center w-1/3">
-            <span class="text-black text-lg" id="username">userName</span>
-        </div>
-        <div class="flex justify-end w-1/3">
-            <span class="text-black text-lg" id="status">status (admin, chef, agent)</span>
-        </div>
-    </div>
-    <div class="container">
-        <h1>Calcul du Prix d'Envoi</h1>
-        <div class="box">
-            <h2>Entrez les Détails de l'Envoi</h2>
-            <div class="input-group">
-                <label for="weightInput">Entrez le poids (g):</label>
-                <input type="number" id="weightInput" step="0.01">
-                <button id="searchButton">Rechercher</button>
-            </div>
-            
-            <table id="resultsTable">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Poids Min</th>
-                        <th>Poids Max</th>
-                        <th>Prix</th>
-                        <th>Choix</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Rows will be dynamically added here -->
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5">
-                            SMS <input type="checkbox" id="smsCheckbox" data-price="0.80">
-                            TOTAL <span id="totalPrice">0.00</span> DH
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Page d’Envoi</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/dashboard.css" />
+		<link rel="stylesheet" href="css/envoi.css" />
+		<style>
+			@media print {
+				.print-button {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- Navbar -->
+		<div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
+			<div class="flex items-center w-1/3">
+				<a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10" /></a>
+			</div>
+			<div class="flex items-center w-1/3">
+				<span class="text-black text-lg">Poste de Maroc</span>
+			</div>
+			<div class="flex justify-center w-1/3">
+				<span class="text-black text-lg" id="username">userName</span>
+			</div>
+			<div class="flex justify-end w-1/3">
+				<span class="text-black text-lg" id="status">status (admin, chef, agent)</span>
+			</div>
+		</div>
+		<div class="container">
+			<h1>Calcul du Prix d'Envoi</h1>
+			<div class="box">
+				<h2>Entrez les Détails de l'Envoi</h2>
+				<div class="input-group">
+					<label for="weightInput">Entrez le poids (g):</label>
+					<input type="number" id="weightInput" step="0.01" />
+					<button id="searchButton">Rechercher</button>
+				</div>
 
-        <div class="box cin-sender-box">
-            <h2>Rechercher l'Expéditeur</h2>
-            <div class="input-group">
-                <label for="cinSender">CIN Sender:</label>
-                <input type="text" id="cinSender">
-                <button id="cinSearchButton">Search</button>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <div class="form-section">
-                <h2>Sender</h2>
-                <input type="text" id="senderCIN" placeholder="CIN">
-                <input type="text" id="senderFirstName" placeholder="First Name">
-                <input type="text" id="senderLastName" placeholder="Last Name">
-                <input type="number" id="senderPhoneNumber" placeholder="Phone Number">
-            </div>
-            <div class="form-section">
-                <h2>Product</h2>
-                <input type="text" id="productDestination" placeholder="City">
-                <input type="text" id="productType" name="productType" readonly>
-            </div>
-            <div class="form-section">
-                <h2>Receiver</h2>
-                <input type="text" id="receiverCIN" placeholder="CIN">
-                <input type="text" id="receiverFirstName" placeholder="First Name">
-                <input type="text" id="receiverLastName" placeholder="Last Name">
-                <input type="number" id="receiverPhoneNumber" placeholder="Phone Number">
-            </div>
-        </div>
-        
-        <button id="submitButton" class="submit-button">Submit</button>
-    </div>
+				<table id="resultsTable">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Poids Min</th>
+							<th>Poids Max</th>
+							<th>Prix</th>
+							<th>Choix</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Rows will be dynamically added here -->
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="5">SMS <input type="checkbox" id="smsCheckbox" data-price="0.80" /> TOTAL <span id="totalPrice">0.00</span> DH</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 
-    <div class="receipt-container" id="receiptContainer" style="text-align: center;">
-        <h2>Receipt</h2>
-        <img id="receiptLogo" src="imgs/logo.png" alt="Logo" style="width:100px; height:auto;">
-        <p>Date: <span id="receiptDate"></span></p>
-        <p>Time: <span id="receiptTime"></span></p>
-        <table class="table table-bordered" style="margin: 0 auto;">
-            <tr>
-                <th>Sender CIN</th>
-                <td id="receiptSenderCIN"></td>
-            </tr>
-            <tr>
-                <th>Sender Name</th>
-                <td id="receiptSenderName"></td>
-            </tr>
-            <tr>
-                <th>Sender Phone Number</th>
-                <td id="receiptSenderPhone"></td>
-            </tr>
-            <tr>
-                <th>Destination</th>
-                <td id="receiptDestination"></td>
-            </tr>
-            <tr>
-                <th>Product Type</th>
-                <td id="receiptProductType"></td>
-            </tr>
-            <tr>
-                <th>Receiver CIN</th>
-                <td id="receiptReceiverCIN"></td>
-            </tr>
-            <tr>
-                <th>Receiver Name</th>
-                <td id="receiptReceiverName"></td>
-            </tr>
-            <tr>
-                <th>Receiver Phone Number</th>
-                <td id="receiptReceiverPhone"></td>
-            </tr>
-            <tr>
-                <th>Total Price</th>
-                <td id="receiptTotalPrice"></td>
-            </tr>
-        </table>
-        <button onclick="window.print()" class="print-button">Print Receipt</button>
-    </div>
+			<div class="box cin-sender-box">
+				<h2>Rechercher l'Expéditeur</h2>
+				<div class="input-group">
+					<label for="cinSender">CIN Sender:</label>
+					<input type="text" id="cinSender" />
+					<button id="cinSearchButton">Search</button>
+				</div>
+			</div>
 
-    <script src="js/envoi.js"></script>
-</body>
+			<div class="form-group">
+				<div class="form-section">
+					<h2>Sender</h2>
+					<input type="text" id="senderCIN" placeholder="CIN" />
+					<input type="text" id="senderFirstName" placeholder="First Name" />
+					<input type="text" id="senderLastName" placeholder="Last Name" />
+					<input type="number" id="senderPhoneNumber" placeholder="Phone Number" />
+				</div>
+				<div class="form-section">
+					<h2>Product</h2>
+					<input type="text" id="productDestination" placeholder="destination" />
+					<input type="text" id="productType" name="productType" value="colis"  readonly />
+				</div>
+				<div class="form-section">
+					<h2>Receiver</h2>
+					<input type="text" id="receiverCIN" placeholder="CIN" />
+					<input type="text" id="receiverFirstName" placeholder="First Name" />
+					<input type="text" id="receiverLastName" placeholder="Last Name" />
+					<input type="number" id="receiverPhoneNumber" placeholder="Phone Number" />
+				</div>
+			</div>
+
+			<button id="submitButton" class="submit-button">Submit</button>
+		</div>
+
+		<div class="receipt-container" id="receiptContainer" style="text-align: center">
+			<h2>Receipt</h2>
+			<img id="receiptLogo" src="imgs/logo.png" alt="Logo" style="width: 100px; height: auto" />
+			<p>Date: <span id="receiptDate"></span></p>
+			<p>Time: <span id="receiptTime"></span></p>
+			<table class="table table-bordered" style="margin: 0 auto">
+				<tr>
+					<th>Sender CIN</th>
+					<td id="receiptSenderCIN"></td>
+				</tr>
+				<tr>
+					<th>Sender Name</th>
+					<td id="receiptSenderName"></td>
+				</tr>
+				<tr>
+					<th>Sender Phone Number</th>
+					<td id="receiptSenderPhone"></td>
+				</tr>
+				<tr>
+					<th>Destination</th>
+					<td id="receiptDestination"></td>
+				</tr>
+				<tr>
+					<th>Product Type</th>
+					<td id="receiptProductType"></td>
+				</tr>
+				<tr>
+					<th>Receiver CIN</th>
+					<td id="receiptReceiverCIN"></td>
+				</tr>
+				<tr>
+					<th>Receiver Name</th>
+					<td id="receiptReceiverName"></td>
+				</tr>
+				<tr>
+					<th>Receiver Phone Number</th>
+					<td id="receiptReceiverPhone"></td>
+				</tr>
+				<tr>
+					<th>Total Price</th>
+					<td id="receiptTotalPrice"></td>
+				</tr>
+			</table>
+			<button onclick="window.print()" class="print-button">Print Receipt</button>
+		</div>
+
+		<section class="hint">
+			<div class="alert alert-primary">
+				<h3 class="alert-title">Hello World</h3>
+				<p class="alert-content">Lorem ipsum</p>
+			</div>
+		</section>
+
+		<!-- axios library -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js" integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+		<script src="js/script.js"></script>
+		<script src="js/envoi.js"></script>
+	</body>
 </html>
