@@ -335,7 +335,7 @@ class clsHeader {
 
 	#fillUserInfoToDom() {
 		this.headerUsernameDom.textContent = `username : ${clsLocalStorage.getUsername()}`;
-		this.headerStatusDom.textContent = `status : ${clsLocalStorage.getRole()}`;
+		this.headerStatusDom.textContent = `Role : ${clsLocalStorage.getRole()}`;
 	}
 }
 // main : --------------------------------------

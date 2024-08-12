@@ -96,8 +96,8 @@ class clsTable {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail)) {
-				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error )) {
+				let message = error.response.data.detail ? error.response.data.detail :   error.response.data.message ? error.response.data.message : error.response.data.error ;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);

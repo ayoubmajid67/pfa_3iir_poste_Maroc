@@ -82,6 +82,7 @@ class SendRequest(APIView):
     permission_classes = [IsAgent]
     
     def post(self, request):
+        print("nice")
         try:
             client = Client.objects.get(cin=request.data["cin"])
             return create_request(client, request)

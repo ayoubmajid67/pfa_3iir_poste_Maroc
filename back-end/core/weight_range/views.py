@@ -119,7 +119,7 @@ class ActiveProductWeightRanges(APIView):
 class GetWeightPrice(APIView):
     permission_classes = [IsAgent]
 
-    def get(self, request):
+    def post(self, request):
         try:
             product = Product.objects.filter(id=request.data['product']).first()
 

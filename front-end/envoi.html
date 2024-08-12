@@ -20,7 +20,7 @@
 		<!-- Navbar -->
 		<div class="navbar flex justify-between items-center bg-thirdColor p-4 shadow fixed top-0 w-full z-10">
 			<div class="flex items-center w-1/3">
-				<a href="./dashboard.html"><img src="imgs/logo.png" alt="Logo" class="logo h-10" /></a>
+				<a href="./dashboard.html"><img src="imgs/logo.png" id="siteLogo" alt="Logo" class="logo h-10" /></a>
 			</div>
 			<div class="flex items-center w-1/3">
 				<span class="text-black text-lg">Poste de Maroc</span>
@@ -39,62 +39,74 @@
 				<div class="input-group">
 					<label for="weightInput">Entrez le poids (g):</label>
 					<input type="number" id="weightInput" step="0.01" />
-					<button id="searchButton">Rechercher</button>
+					<button id="searchPricesOptionsBtn">Rechercher</button>
 				</div>
 
-				<table id="resultsTable">
+				<table id="resultsPricesTable">
 					<thead>
 						<tr>
-							<th></th>
-							<th>Poids Min</th>
-							<th>Poids Max</th>
-							<th>Prix</th>
+							<th>product</th>
+							<th>Prix (DH)</th>
+							<th>weight (G)</th>
 							<th>Choix</th>
 						</tr>
 					</thead>
 					<tbody>
 						<!-- Rows will be dynamically added here -->
+						<!-- <tr>
+							<td class="product">Colis</td>
+							<td class="price">500</td>
+							<td class="weight">500</td>
+							<td>
+								<input type="checkbox" class="selectPrice" data-product="Colis" />
+							</td>
+						</tr> -->
 					</tbody>
 					<tfoot>
 						<tr>
-							<td colspan="5">SMS <input type="checkbox" id="smsCheckbox" data-price="0.80" /> TOTAL <span id="totalPrice">0.00</span> DH</td>
+							<td colspan="5">SMS<input type="checkbox" id="smsCheckbox" data-price="0.80" /> TOTAL <span id="totalPrice">0.00</span> DH</td>
 						</tr>
 					</tfoot>
 				</table>
-			</div>
-
-			<div class="box cin-sender-box">
-				<h2>Rechercher l'Expéditeur</h2>
-				<div class="input-group">
-					<label for="cinSender">CIN Sender:</label>
-					<input type="text" id="cinSender" />
-					<button id="cinSearchButton">Search</button>
+				<div class="submitContainer">
+					<button id="submitPricesOptionsBtn">submit</button>
 				</div>
 			</div>
 
-			<div class="form-group">
-				<div class="form-section">
-					<h2>Sender</h2>
-					<input type="text" id="senderCIN" placeholder="CIN" />
-					<input type="text" id="senderFirstName" placeholder="First Name" />
-					<input type="text" id="senderLastName" placeholder="Last Name" />
-					<input type="number" id="senderPhoneNumber" placeholder="Phone Number" />
+			<div class="endContent">
+				<div class="box cin-sender-box">
+					<h2>Rechercher l'Expéditeur</h2>
+					<div class="input-group">
+						<label for="cinSender">CIN Sender:</label>
+						<input type="text" id="cinSender" />
+						<button id="cinSearchButton">Search</button>
+					</div>
 				</div>
-				<div class="form-section">
-					<h2>Product</h2>
-					<input type="text" id="productDestination" placeholder="destination" />
-					<input type="text" id="productType" name="productType" value="colis"  readonly />
-				</div>
-				<div class="form-section">
-					<h2>Receiver</h2>
-					<input type="text" id="receiverCIN" placeholder="CIN" />
-					<input type="text" id="receiverFirstName" placeholder="First Name" />
-					<input type="text" id="receiverLastName" placeholder="Last Name" />
-					<input type="number" id="receiverPhoneNumber" placeholder="Phone Number" />
-				</div>
+				<form id="depotForm">
+					<div class="form-group">
+						<div class="form-section">
+							<h2>Sender</h2>
+							<input type="text" id="senderCIN" placeholder="CIN" required/>
+							<input type="text" id="senderFirstName" placeholder="First Name" required/>
+							<input type="text" id="senderLastName" placeholder="Last Name" required/>
+							<input type="number" id="senderPhoneNumber" placeholder="Phone Number" required />
+						</div>
+						<div class="form-section">
+							<h2>Product</h2>
+							<input type="text" id="productDestination" placeholder="destination" required/>
+							<input type="text" id="productType" name="productType" value="colis" readonly  />
+						</div>
+						<div class="form-section">
+							<h2>Receiver</h2>
+							<input type="text" id="receiverCIN" placeholder="CIN"  required/>
+							<input type="text" id="receiverFirstName" placeholder="First Name" required/>
+							<input type="text" id="receiverLastName" placeholder="Last Name"  required/>
+							<input type="number" id="receiverPhoneNumber" placeholder="Phone Number" required />
+						</div>
+					</div>
+					<button id="submitButton" class="submit-button">Submit</button>
+				</form>
 			</div>
-
-			<button id="submitButton" class="submit-button">Submit</button>
 		</div>
 
 		<div class="receipt-container" id="receiptContainer" style="text-align: center">
