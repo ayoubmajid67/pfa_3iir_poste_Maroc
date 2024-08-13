@@ -401,7 +401,7 @@ n>
 
 			this.#convertSaveCardColumnsToNormalMode(tarifColumns, tarifData);
 			this.#clearTarifPreviousAndChangeValues();
-			clsUtile.alertHint("user updated with success", "success");
+			clsUtile.alertHint("tarif updated with success", "success");
 		} catch (error) {
 			clsUtile.alertHint(error.message, error.type);
 		}
@@ -480,7 +480,7 @@ class clsAddTarifForm {
 		status: "",
 		price: "",
 	};
-	constructor(usersContainer) {
+	constructor(tarifsContainer) {
 		this.addTarifFormDom = document.getElementById("addTarifForm");
 		this.productInputDom = document.getElementById("tarifTypeInput");
 		this.minWeightInputDom = document.getElementById("addTarifMinWeight");
@@ -489,7 +489,7 @@ class clsAddTarifForm {
 		this.priceInputDom = document.getElementById("addTarifPrice");
 		this.submitBtnDom = document.getElementById("submitAddTarifBtn");
 
-		this.tarifsContainerDom = usersContainer;
+		this.tarifsContainerDom = tarifsContainer;
 
 		this.#fillTarifTypes();
 
@@ -575,7 +575,7 @@ window.addEventListener("load", async () => {
 
 	const filterObject = new filter(tableObject.tableContainerContentDom);
 
-	const addUserObject = new clsAddTarifForm(tableObject.tableContainerContentDom);
+	const addTarifObject = new clsAddTarifForm(tableObject.tableContainerContentDom);
 });
 
 window.addEventListener("resize", () => {

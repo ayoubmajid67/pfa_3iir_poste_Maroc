@@ -133,13 +133,13 @@ class clsUser {
 	// Checks if the user is logged in based on the presence of a token and username in localStorage
 	static usersPagesName = {
 		manager: ["consultation"],
-		admin: ["consultation", "tarif", "gestion offices", "gestion users"],
+		admin: [ "tarif", "gestion offices", "gestion users"],
 		agent: ["envoyé", "consultation"],
 	};
 
 	static usersRealNameHtmlPages = {
 		manager: ["dashboard.html", "consultation.html"],
-		admin: ["dashboard.html", "consultation.html", "Tarif.html", "GestionOffice.html", "GestionUsers.html"],
+		admin: ["dashboard.html",, "Tarif.html", "GestionOffice.html", "GestionUsers.html"],
 		agent: ["dashboard.html", "envoi.html", "consultation.html"],
 	};
 	static pagesName = {

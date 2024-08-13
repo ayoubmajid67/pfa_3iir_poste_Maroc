@@ -1,7 +1,7 @@
 class clsTable {
 	static toggleOfficeBtnContent = ["Show All offices", "Hide All offices"];
 	constructor() {
-		this.userTable = document.querySelector(".table-responsive .table");
+		this.officesTable = document.querySelector(".table-responsive .table");
 		this.tableContainerContentDom = document.getElementById("officeTableBody");
 		this.toggleOfficesShowBtnDom = document.getElementById("toggleShowOfficesBtn");
 		this.officeFilter = document.getElementById("officeNumber");
@@ -26,12 +26,12 @@ class clsTable {
 
 	handelTableResponsive() {
 		if (window.innerHeight >= 1600) {
-			this.userTable.removeAttribute("style");
+			this.officesTable.removeAttribute("style");
 			return;
 		}
 
 		if (window.innerWidth >= 1000) {
-			this.userTable.removeAttribute("style");
+			this.officesTable.removeAttribute("style");
 			/*
 			  with 7 columns : 
 			  the  convenient  font-size of the table content at 1400px (window width ) : 
@@ -47,7 +47,7 @@ class clsTable {
 				basicFontSize: 16,
 			};
 			const newFontSize = Math.floor((WidthRole.basicFontSize * window.innerWidth) / WidthRole.basicWindowWidth);
-			this.userTable.style.fontSize = `${newFontSize}px`;
+			this.officesTable.style.fontSize = `${newFontSize}px`;
 		} else {
 			/*
 			  with 7 columns : 
@@ -59,7 +59,7 @@ class clsTable {
 			 
 			 */
 
-			this.userTable.style.fontSize = `9px`;
+			this.officesTable.style.fontSize = `9px`;
 			const scaleRole = {
 				basicWindowWidth: 800,
 				basicScaleValue: 0.8,
@@ -67,7 +67,7 @@ class clsTable {
 			if (window.innerWidth <= 768) scaleRole.basicScaleValue = 0.82;
 
 			const newScaleValue = (scaleRole.basicScaleValue * window.innerWidth) / scaleRole.basicWindowWidth;
-			this.userTable.style.transform = `scale(${newScaleValue})`;
+			this.officesTable.style.transform = `scale(${newScaleValue})`;
 		}
 	}
 

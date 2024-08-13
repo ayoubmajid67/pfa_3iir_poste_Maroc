@@ -115,3 +115,10 @@ body {
         padding-top: 180px; /* Adjust based on the height of the navbar and message */
     }
 }
+.intro{
+    background-color: rgba(0, 0, 0, 0.676);
+    padding: 5px 2px;
+    border-radius: 5px;
+    color: var(--secondaryColor);
+    
+}
