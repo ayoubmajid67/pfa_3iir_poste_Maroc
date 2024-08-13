@@ -136,6 +136,7 @@ class clsUser {
 		admin: ["consultation", "tarif", "gestion offices", "gestion users"],
 		agent: ["envoyé", "consultation"],
 	};
+
 	static usersRealNameHtmlPages = {
 		manager: ["dashboard.html", "consultation.html"],
 		admin: ["dashboard.html", "consultation.html", "Tarif.html", "GestionOffice.html", "GestionUsers.html"],

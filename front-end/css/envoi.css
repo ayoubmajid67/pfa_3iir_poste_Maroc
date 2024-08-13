@@ -173,6 +173,7 @@ select {
   border-radius: 6px;
 }
 
+.print-button,
 .submit-button {
   width: 100%;
   background-color: var(--primaryColor);
@@ -187,31 +188,65 @@ select {
   transition: background-color 0.3s;
 }
 
+.print-button,
 .submit-button:hover {
   background-color: var(--primaryColor);
 }
 
 .receipt-container {
-  display: none;
-  background: white;
-  padding: 20px;
+
+
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  width: 100%;
   margin-top: 20px;
-  text-align: left;
+align-items: center;
+
+text-align: left;
+
+  
+
+
+
+}
+.receipt-container .content{
+
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
+.print-button {
+  width: fit-content;
+}
+
+
 .receipt-container h2 {
-  text-align: center;
+  color: var(--primaryColor);
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+.receipt-container h3 {
+
+  margin-top: 50px;
+  margin-bottom: 10px;
+
+}
+
+.receipt-container p {
+  font-size: 16px;
+  margin: 5px 0;
+
 }
 
 .receipt-container table {
-  width: 100%;
+  max-width: 900px;
+  
   border-collapse: collapse;
   margin-top: 20px;
   background-color: #fff;
+  border: 5px solid black;
 }
 
 .receipt-container table,
@@ -219,6 +254,13 @@ select {
 .receipt-container td {
   border: 1px solid #ddd;
 }
+
+.table th, .table td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: left;
+}
+
 
 .receipt-container th,
 .receipt-container td {
@@ -232,20 +274,30 @@ select {
 }
 
 @media print {
-  body * {
-    visibility: hidden;
-  }
 
-  .receipt-container,
-  .receipt-container * {
-    visibility: visible;
+  body .navbar{
+    display: none;
   }
-
+ 
+  .receipt-container img{
+    display: inline;
+  }
+  .receipt-container .content{
+    display: flex;
+  }
+  
   .receipt-container {
+   
+    background: white;
+    display: block;
     position: absolute;
-    left: 0;
     top: 0;
-    width: 100%;
+    left: 0;
+    z-index: 10000000;
+
+    width: 100vw;
+
+
   }
 
   .print-button {

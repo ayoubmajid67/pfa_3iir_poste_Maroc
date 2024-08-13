@@ -43,7 +43,6 @@ class clsOfficeInfo {
 	async managePushOfficeInfo() {
 		try {
 			let officeInfo = await this.getOfficeInfoApi();
-		
 
 			this.pushOfficeInfoToDom(officeInfo);
 		} catch (error) {
@@ -75,7 +74,8 @@ class clsTable {
 		});
 
 		this.handelTableResponsive();
-		this.managePushAgentList();
+
+		if (clsLocalStorage.getRole() == "manager") this.managePushAgentList();
 		this.manageGetDepots();
 	}
 	#getAgentOptionHtmlStructure(agentInfo) {
@@ -96,8 +96,8 @@ class clsTable {
 			return data;
 		} catch (error) {
 			// Handle error and display message
-			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error )) {
-				let message = error.response.data.detail ? error.response.data.detail :   error.response.data.message ? error.response.data.message : error.response.data.error ;
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
 				throw { message, type: "warning" };
 			} else {
 				// console.log(error);
@@ -212,7 +212,7 @@ class clsTable {
 
 		let cancelBtnContent = "";
 
-		if (isSameDay && currentDate.getHours() > 6 && depot.status != "canceled") {
+		if (clsLocalStorage.getRole() == "manager" && isSameDay && currentDate.getHours() > 6 && depot.status != "canceled") {
 			cancelBtnContent = `
 	
 					<div class="btnContainer">
@@ -346,6 +346,7 @@ class filter {
 			endDate: document.getElementById("endDate"),
 			selectedAgent: document.getElementById("agentsList"),
 		};
+		if (clsLocalStorage.getRole() != "manager") this.filterInputsDom.selectedAgent.closest(".col").style.display = "none";
 
 		this.filterInputsDom.startDate.addEventListener("keypress", (event) => {
 			if (event.key == "Enter") this.filterInputsDom.endDate.focus();
@@ -384,7 +385,7 @@ class filter {
 				agentId: depotBox.querySelector(".agentId").textContent,
 			};
 
-			if (depotBoxInfo.createdDate >= filterInputsValue.startDateValue && depotBoxInfo.createdDate <= filterInputsValue.endDateValue && (filterInputsValue.selectedAgentIdValue == "ALL" || filterInputsValue.selectedAgentIdValue == depotBoxInfo.agentId)) {
+			if (depotBoxInfo.createdDate >= filterInputsValue.startDateValue && depotBoxInfo.createdDate <= filterInputsValue.endDateValue && (clsLocalStorage.getRole() != "manager" || filterInputsValue.selectedAgentIdValue == "ALL" || filterInputsValue.selectedAgentIdValue == depotBoxInfo.agentId)) {
 				depotBox.style.display = "table-row";
 			} else depotBox.style.display = "none";
 		});

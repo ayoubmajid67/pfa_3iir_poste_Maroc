@@ -272,6 +272,7 @@ class clsEndContent {
 
 class clsDepotForm {
 	static depotFormDom = document.querySelector("#depotForm");
+
 	static senderInputs = {
 		cinInput: clsDepotForm.depotFormDom.querySelector("#senderCIN"),
 		firstNameInput: clsDepotForm.depotFormDom.querySelector("#senderFirstName"),
@@ -290,15 +291,39 @@ class clsDepotForm {
 		destinationInput: clsDepotForm.depotFormDom.querySelector("#productDestination"),
 		productTypeInput: clsDepotForm.depotFormDom.querySelector("#productType"),
 	};
+	static receiptContainerDom = document.getElementById("receiptContainer");
 	constructor() {
 		clsDepotForm.depotFormDom.addEventListener("submit", async (event) => {
 			event.preventDefault();
 			clsDepotForm.submitBtn.disabled = true;
 			await this.manageAddDepot();
-			clsDepotForm.submitBtn.disabled = false;
+		});
+		this.enableSubmitButtonOnChange();
+	}
+	enableSubmitButtonOnChange() {
+		let { cinInput: cinInputSender, firstNameInput: firstNameInputSender, lastNameInput: lastNameInputSender, phoneNumberInput: phoneNumberInputSender } = clsDepotForm.senderInputs;
+		let senderInputsObject = {
+			cinInputSender,
+			firstNameInputSender,
+			lastNameInputSender,
+			phoneNumberInputSender,
+		};
+
+		const allInputs = {
+			...senderInputsObject,
+			...clsDepotForm.receiverInputs,
+			...clsDepotForm.productInputs,
+		};
+
+		Object.values(allInputs).forEach((inputElement) => {
+			inputElement.addEventListener("input", () => {
+			
+				clsDepotForm.submitBtn.disabled = false; // Enable the submit button
+
+				clsDepotForm.receiptContainerDom.innerHTML = "";
+			});
 		});
 	}
-
 	async #addDepotApi(depotInfo) {
 		let accessToken = clsLocalStorage.getToken();
 
@@ -324,20 +349,43 @@ class clsDepotForm {
 		}
 	}
 
-  #clearFormInputs(){
-    clsDepotForm.senderInputs.cinInput.value="",
-    clsDepotForm.senderInputs.firstNameInput.value="",
-    clsDepotForm.senderInputs.lastNameInput.value="",
-    clsDepotForm.senderInputs.phoneNumberInput.value="",
-    clsDepotForm.productInputs.destinationInput.value="",
-    clsDepotForm.receiverInputs.cinInput.value="",
-    clsDepotForm.receiverInputs.firstNameInput.value="",
-    clsDepotForm.receiverInputs.lastNameInput.value="",
-    clsDepotForm.receiverInputs.phoneNumberInput.value="",
+	#clearFormInputs() {
+		clsDepotForm.senderInputs.cinInput.value = "";
+		clsDepotForm.senderInputs.firstNameInput.value = "";
+		clsDepotForm.senderInputs.lastNameInput.value = "";
+		clsDepotForm.senderInputs.phoneNumberInput.value = "";
+		clsDepotForm.productInputs.destinationInput.value = "";
+		clsDepotForm.receiverInputs.cinInput.value = "";
+		clsDepotForm.receiverInputs.firstNameInput.value = "";
+		clsDepotForm.receiverInputs.lastNameInput.value = "";
+		clsDepotForm.receiverInputs.phoneNumberInput.value = "";
+	}
+	async getWeightRangesApi(productId) {
+		let accessToken = clsLocalStorage.getToken();
 
-  }
+		try {
+			const response = await axios.get(`${baseUrl}active-product-weight-ranges/${productId}/`, {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+				},
+			});
+
+			const data = response.data;
+
+			return data;
+		} catch (error) {
+			// Handle error and display message
+			if (error.response && error.response.data && (error.response.data.message || error.response.data.detail || error.response.data.error)) {
+				let message = error.response.data.detail ? error.response.data.detail : error.response.data.message ? error.response.data.message : error.response.data.error;
+				throw { message, type: "warning" };
+			} else {
+				// console.log(error);
+				throw { message: "An unexpected error occurred.", type: "danger" };
+			}
+		}
+	}
 	#getDepotInfo() {
-    // break point : 
+		// break point :
 		const depotInfo = {
 			cin: clsDepotForm.senderInputs.cinInput.value,
 			first_name: clsDepotForm.senderInputs.firstNameInput.value,
@@ -354,12 +402,145 @@ class clsDepotForm {
 			last_name_receiver: clsDepotForm.receiverInputs.lastNameInput.value,
 			phone_number_receiver: clsDepotForm.receiverInputs.phoneNumberInput.value,
 		};
+
 		return depotInfo;
+	}
+
+	getRangeFromWeightRanges(targetWeight, weightRanges) {
+		for (let weightRange of weightRanges) {
+			if (weightRange.min_weight <= targetWeight && weightRange.max_weight >= targetWeight) return weightRange.id;
+		}
+	}
+
+	getReceiptHtmlStructure(receipt) {
+		return `
+				
+			 <div class="content">
+			<h2>Receipt</h2>
+			<img id="receiptLogo" src="imgs/logo.png" alt="Logo" style="width: 100px; height: auto;" />
+			<p>Date: <span id="receiptDate">${new Date(receipt.date).toLocaleDateString()}</span></p>
+			<p>Time: <span id="receiptTime">${new Date(receipt.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span></p>
+			
+			<h3>Client Information</h3>
+			<table class="table table-bordered" style="margin: 0 auto;">
+			  <tr>
+				<th>Client CIN</th>
+				<td id="receiptClientCIN">${receipt.request.client.cin}</td>
+			  </tr>
+			  <tr>
+				<th>Client Name</th>
+				<td id="receiptClientName">${receipt.request.client.first_name} ${receipt.request.client.last_name}</td>
+			  </tr>
+			  <tr>
+				<th>Client Phone Number</th>
+				<td id="receiptClientPhone">${receipt.request.client.phone_number}</td>
+			  </tr>
+			</table>
+		  
+			<h3>Agent Information</h3>
+			<table class="table table-bordered" style="margin: 0 auto;">
+			  <tr>
+				<th>Agent CIN</th>
+				<td id="receiptAgentCIN">${receipt.request.agent.cin}</td>
+			  </tr>
+			  <tr>
+				<th>Agent Name</th>
+				<td id="receiptAgentName">${receipt.request.agent.first_name} ${receipt.request.agent.last_name}</td>
+			  </tr>
+			  <tr>
+				<th>Agent Email</th>
+				<td id="receiptAgentEmail">${receipt.request.agent.email}</td>
+			  </tr>
+			  <tr>
+				<th>Agent Role</th>
+				<td id="receiptAgentRole">${receipt.request.agent.role}</td>
+			  </tr>
+			  <tr>
+				<th>Agent Office</th>
+				<td id="receiptAgentOffice">${receipt.request.agent.office.name}</td>
+			  </tr>
+			  <tr>
+				<th>Office Address</th>
+				<td id="receiptOfficeAddress">${receipt.request.agent.office.address}, ${receipt.request.agent.office.city}</td>
+			  </tr>
+			</table>
+		  
+			<h3>Product Information</h3>
+			<table class="table table-bordered" style="margin: 0 auto;">
+			  <tr>
+				<th>Product ID</th>
+				<td id="receiptProductID">${receipt.request.product.id}</td>
+			  </tr>
+			  <tr>
+				<th>Product Code</th>
+				<td id="receiptProductCode">${receipt.request.product.code}</td>
+			  </tr>
+			  <tr>
+				<th>Product Name</th>
+				<td id="receiptProductName">${receipt.request.product.name}</td>
+			  </tr>
+			  <tr>
+				<th>Product Prefix</th>
+				<td id="receiptProductPrefix">${receipt.request.product.prefix}</td>
+			  </tr>
+			  <tr>
+				<th>Product Sequence</th>
+				<td id="receiptProductSequence">${receipt.request.product.sequence}</td>
+			  </tr>
+			</table>
+		  
+			<h3>Request Details</h3>
+			<table class="table table-bordered" style="margin: 0 auto;">
+			  <tr>
+				<th>Request ID</th>
+				<td id="receiptRequestID">${receipt.request.id}</td>
+			  </tr>
+			  <tr>
+				<th>Reference</th>
+				<td id="receiptReference">${receipt.request.reference}</td>
+			  </tr>
+			  <tr>
+				<th>Status</th>
+				<td id="receiptStatus">${receipt.request.status}</td>
+			  </tr>
+			  <tr>
+				<th>Destination</th>
+				<td id="receiptDestination">${receipt.request.destination}</td>
+			  </tr>
+			  <tr>
+				<th>Weight</th>
+				<td id="receiptWeight">${receipt.request.weight}</td>
+			  </tr>
+			  <tr>
+				<th>Amount (DH)</th>
+				<td id="receiptAmount">${receipt.request.amount}</td>
+			  </tr>
+			  <tr>
+				<th>SMS Notification</th>
+				<td id="receiptSMS">${receipt.request.sms ? "Yes" : "No"}</td>
+			  </tr>
+			</table>
+		</div>
+					<button onclick="window.print()" class="print-button">Print Receipt</button>
+		`;
 	}
 
 	async manageAddDepot() {
 		const depotInfo = this.#getDepotInfo();
-		console.log(depotInfo);
+		let weightsRanges = await this.getWeightRangesApi(depotInfo.product);
+		depotInfo.range = this.getRangeFromWeightRanges(depotInfo.weight, weightsRanges);
+
+		try {
+			let data = await this.#addDepotApi(depotInfo);
+
+			clsUtile.alertHint(data.message, "success");
+			let receipt = data.receipt;
+			let receiptHtmlStructure = this.getReceiptHtmlStructure(receipt);
+			clsDepotForm.receiptContainerDom.innerHTML = receiptHtmlStructure;
+			this.#clearFormInputs();
+		} catch (error) {
+			clsUtile.alertHint(error.message, error.type);
+		}
 	}
 
 	static loadProductTypeDom() {
@@ -380,5 +561,5 @@ window.addEventListener("load", () => {
 	const priceOptionObject = new clsPriceOPtions();
 	const searchClientObject = new clsSearchClient();
 	const depotFormObject = new clsDepotForm();
-	console.log(clsPriceOPtions.finalProductTypeChoice);
+
 });

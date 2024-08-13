@@ -327,7 +327,7 @@ class clsTable {
 			officeDom: targetUserCard.querySelector(".office"),
 			statusDom: targetUserCard.querySelector(".status"),
 		};
-		console.log(userColumns); 
+	
 		this.#convertEditedCardColumnsToNormalMode(userColumns);
 		this.#clearUserPreviousAndChangeValues();
 	}
