@@ -5,6 +5,8 @@
 
 Welcome to the repository for my internship project at Poste de Maroc! This project aims to address a key issue that employees have been facing: the need to use two separate interfaces for "courrier" and "colis," each requiring separate authentication and accounts. This setup has led to inefficiencies and confusion.
 
+![Project Logo](.homePage.png)
+
 ## Goals
 
 The main goal of this project is to develop a unified interface that:
